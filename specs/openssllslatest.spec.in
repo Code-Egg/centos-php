@@ -1,0 +1,61 @@
+#
+# The spec is to build openlsws rpm
+#
+
+%define _prefix /usr/local
+%global debug_package %{nil}
+
+Name: openssllslatest
+Version: %%VERSION%%
+Release: %%BUILD%%%{?dist}
+Summary: OpenSSL
+Group: Application/WebServer
+License: GPL 3.0
+URL: http://openssl.org
+Source0: openssllslatest-%{version}.tar.gz
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+BuildRequires: wget 
+
+%description
+OpenSSLLSlatest
+
+
+%prep 
+%setup
+pwd
+echo "888888888888"
+ 
+%build
+./config --prefix=/usr/local --openssldir=/usr/local/openssl no-shared
+
+make
+
+%install
+rm -rf %{buildroot}
+make INSTALL_PREFIX=$RPM_BUILD_ROOT install 
+
+%clean
+
+%pre
+%post
+-p /sbin/ldconfigi
+
+
+%postun -p /sbin/ldconfig
+
+%files
+%defattr(-,root,root,-)
+#%dir /usr/local/lib64
+#%dir /usr/local/include/openssl
+#%dir /usr/local/openssl
+#%dir /usr/local/bin
+%dir /usr/local
+#/usr/local/include/openssl/*
+#/usr/local/lib64/*
+#/usr/local/openssl/*
+#/usr/local/bin/*
+/usr/local/*
+
+
+%changelog
+%%CHANGE_LOG%%
