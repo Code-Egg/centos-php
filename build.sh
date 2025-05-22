@@ -26,10 +26,10 @@ cur_path=$(pwd)
 product_dir=${cur_path}/packaging/build/$product
 result_dir=${product_dir}/$version-$revision/result
 
-build_dir=$(pwd)/rpmbuild
-RPMBUILD_SPECS=$(pwd)/rpmbuild/SPECS
-RPMBUILD_SOURCES=$(pwd)/rpmbuild/SOURCES
-RPMBUILD_SRPMS=$(pwd)/rpmbuild/SRPMS
+build_dir=$(pwd)/build
+BUILD_SPECS=$(pwd)/build/SPECS
+BUILD_SOURCES=$(pwd)/build/SOURCES
+BUILD_SRPMS=$(pwd)/build/SRPMS
 
 BUILDER_NAME="LiteSpeedTech"
 BUILDER_EMAIL="info@litespeedtech.com"
@@ -46,7 +46,7 @@ if [ -d $result_dir ]; then
     echo
 fi
 
-if [ $Yes_or_No == y ]; then
+if [ "${Yes_or_No}" == y ]; then
     echo
     echo -e "\x1b[33m Clear the result directory for new build ! \x1b[0m"
     echo

@@ -132,7 +132,7 @@ build_rpms()
     echo
     echo
     echo "Start building rpm source package"
-    rpmbuild --nodeps -bs $RPMBUILD_SPECS/$product-$version-$revision.spec        # no dep check, only build source rpm
+    rpmbuild --nodeps -bs $BUILD_SPECS/$product-$version-$revision.spec        # no dep check, only build source rpm
     RET=$?
     echo "Finish building rpm source package"
     echo
@@ -144,7 +144,7 @@ build_rpms()
 
     for platform in $platforms;
     do
-        mock -v --resultdir=$result_dir/$platform --disable-plugin=selinux -r $platform $RPMBUILD_SRPMS/$product-$version-$revision.fc41.src.rpm
+        mock -v --resultdir=$result_dir/$platform --disable-plugin=selinux -r $platform $BUILD_SRPMS/$product-$version-$revision.fc41.src.rpm
         RET=$?
     done
 }
