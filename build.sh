@@ -26,10 +26,10 @@ cur_path=$(pwd)
 product_dir=${cur_path}/packaging/build/$product
 result_dir=${product_dir}/$version-$revision/result
 
-build_dir=$(cur_path)/build
-BUILD_SPECS=$(cur_path)/build/SPECS
-BUILD_SOURCES=$(cur_path)/build/SOURCES
-BUILD_SRPMS=$(cur_path)/build/SRPMS
+build_dir=$cur_path/build
+BUILD_SPECS=$cur_path/build/SPECS
+BUILD_SOURCES=$cur_path/build/SOURCES
+BUILD_SRPMS=$cur_path/build/SRPMS
 
 BUILDER_NAME="LiteSpeedTech"
 BUILDER_EMAIL="info@litespeedtech.com"
