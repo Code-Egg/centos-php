@@ -22,13 +22,8 @@ fi
 
 echo "The following platforms are specified:"
 
-case "$platform" in
-  *el7*) dist=".el7" ;;
-  *el8*) dist=".el8" ;;
-  *el9*) dist=".el9" ;;
-  *) echo "Unsupported platform: $platform" && exit 1 ;;
-esac
 echo $platforms
+dist_tag=".el$(echo "$platform" | grep -oP '(?<=epel-)[0-9]+')"
 
 cur_path=$(pwd)
 product_dir=${cur_path}/packaging/build/$product
