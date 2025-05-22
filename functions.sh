@@ -132,11 +132,13 @@ build_rpms()
     echo
     echo
     echo ">>>>>>>>>>>>>>>>>>>>>>>>>>Start building rpm source package<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-    echo "BUILD_SPECS:$BUILD_SPECS"
+    echo "SPEC Location: $BUILD_SPECS/$product-$version-$revision.spec"
     rpmbuild --nodeps -bs $BUILD_SPECS/$product-$version-$revision.spec        # no dep check, only build source rpm
     RET=$?
     echo ">>>>>>>>>>>>>    RET=$RET <<<<<<<<<<<<<<<<<<<<<<<<"
-
+    if [ $RET != 0 ]; then
+        exit 1
+    fi
     echo ">>>>>>>>>>>>>>>>>>>>>>>>>>Finish building rpm source package<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
     echo
     echo
