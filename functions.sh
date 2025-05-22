@@ -124,18 +124,20 @@ prepare_source()
 build_rpms()
 {
     echo ">>>>>>>>>>>>>>>>>>>>>>>Build rpms <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-    if [ -f $build_dir/SRPMS/$product-$version-$revision.fc41.src.rpm ]; then
+    if [ -f $build_dir/SRPMS/$product-$version-$revision.el*.src.rpm ]; then
         echo
         echo -e "\x1b[33m*********** Found existing source rpm, delete it and create new one **********\x1b[0m"
         echo
-        rm -f $build_dir/SRPMS/$product-$version-$revision.fc41.src.rpm
+        rm -f $build_dir/SRPMS/$product-$version-$revision.src.rpm
     fi
 
     echo
     echo
     echo ">>>>>>>>>>>>>>>>>>>>>>>>>>Start building rpm source package<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
     echo "SPEC Location: $BUILD_SPECS/$product-$version-$revision.spec"
-    rpmbuild --nodeps -bs $BUILD_SPECS/$product-$version-$revision.spec  --define "_topdir $TOPDIR"      # no dep check, only build source rpm
+    rpmbuild --nodeps -bs $BUILD_SPECS/$product-$version-$revision.spec  \
+      --define "_topdir $TOPDIR" \
+      --define "dist $dist_tag"
     RET=$?
     echo ">>>>>>>>>>>>>    RET=$RET <<<<<<<<<<<<<<<<<<<<<<<<"
     if [ $RET != 0 ]; then
@@ -149,9 +151,12 @@ build_rpms()
     echo "Mock run into conditions for PHP main packages,openlitespeed and other products (non opcode cache packages.)"
     echo
 
+
+    SRPM=$BUILD_ROOT/SRPMS/${product}-${version}-${revision}${dist_tag}.src.rpm
+
     for platform in $platforms;
     do
-        mock -v --resultdir=$result_dir/$platform --disable-plugin=selinux -r $platform $BUILD_SRPMS/$product-$version-$revision.fc41.src.rpm
+        mock -v --resultdir=$result_dir/$platform --disable-plugin=selinux -r $platform "$SRPM"
         RET=$?
     done
 }
