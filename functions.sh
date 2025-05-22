@@ -1,5 +1,6 @@
 #!/bin/bash
 #set -x
+BUILD_ROOT=$(pwd)/rpmbuild
 TOPDIR=$(pwd)/rpmbuild
 
 specify_versions()
