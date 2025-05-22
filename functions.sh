@@ -1,5 +1,6 @@
 #!/bin/bash
 #set -x
+TOPDIR=$(pwd)/rpmbuild
 
 specify_versions()
 {
@@ -134,7 +135,7 @@ build_rpms()
     echo
     echo ">>>>>>>>>>>>>>>>>>>>>>>>>>Start building rpm source package<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
     echo "SPEC Location: $BUILD_SPECS/$product-$version-$revision.spec"
-    rpmbuild --nodeps -bs $BUILD_SPECS/$product-$version-$revision.spec        # no dep check, only build source rpm
+    rpmbuild --nodeps -bs $BUILD_SPECS/$product-$version-$revision.spec  --define "_topdir $TOPDIR"      # no dep check, only build source rpm
     RET=$?
     echo ">>>>>>>>>>>>>    RET=$RET <<<<<<<<<<<<<<<<<<<<<<<<"
     if [ $RET != 0 ]; then
