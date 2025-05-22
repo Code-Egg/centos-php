@@ -118,7 +118,6 @@ prepare_source()
         wget --no-check-certificate -O $build_dir/SOURCES/$source $source_url
     fi
     echo "SOURCE: $build_dir/SOURCES/$source"
-    exit 1
 }
 
 build_rpms()
