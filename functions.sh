@@ -121,7 +121,7 @@ prepare_source()
 
 build_rpms()
 {
-    # build src rpm
+    echo ">>>>>>>>>>>>>>>>>>>>>>>Build rpms <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
     if [ -f $build_dir/SRPMS/$product-$version-$revision.fc41.src.rpm ]; then
         echo
         echo -e "\x1b[33m*********** Found existing source rpm, delete it and create new one **********\x1b[0m"
@@ -131,10 +131,13 @@ build_rpms()
 
     echo
     echo
-    echo "Start building rpm source package"
+    echo ">>>>>>>>>>>>>>>>>>>>>>>>>>Start building rpm source package<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+    echo "BUILD_SPECS:$BUILD_SPECS"
     rpmbuild --nodeps -bs $BUILD_SPECS/$product-$version-$revision.spec        # no dep check, only build source rpm
     RET=$?
-    echo "Finish building rpm source package"
+    echo ">>>>>>>>>>>>>    RET=$RET <<<<<<<<<<<<<<<<<<<<<<<<"
+
+    echo ">>>>>>>>>>>>>>>>>>>>>>>>>>Finish building rpm source package<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
     echo
     echo
 
