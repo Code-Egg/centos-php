@@ -46,6 +46,28 @@ if [ -z "${1}" ]; then
     show_help
 fi
 
+if [ -z "${version}" ]; then
+    version="$(grep ${product}= VERSION.txt | awk -F '=' '{print $2}')"
+fi
+
+if [ -z "${revision}" ]; then
+    TMP_DIST=$(echo $dists | awk '{ print $1 }')
+    echo ${product} | grep '-' >/dev/null
+    if [ $? = 1 ]; then 
+        revision=$(curl -isk https://${prod_server}/centos/9/x86_64/RPMS/ | grep ${product}-${version} \
+          | awk -F '-' '{print $3}' | awk -F '+' '{print $1}' | tail -1)
+    else
+        revision=$(curl -isk https://${prod_server}/centos/9/x86_64/RPMS/  | grep ${product}-${version} \
+          | awk -F '-' '{print $4}' | awk -F '+' '{print $1}' | tail -1)      
+    fi      
+    if [[ $revision == ?(-)+([[:digit:]]) ]]; then
+        revision=$((revision+1))
+    else
+        echo "$revision is not a number, set value to 1"
+        revision=1
+    fi      
+fi
+
 while [ ! -z "${1}" ]; do
     case $1 in
         --version) shift
