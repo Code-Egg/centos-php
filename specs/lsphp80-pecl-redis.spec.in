@@ -17,7 +17,7 @@
 %endif
 
 %define debug_package %{nil}
-%define php_prefix lsphp%%PHP_VER%%
+%define php_prefix lsphp80
 %define _prefix /usr/local/lsws/%{php_prefix}
 %define _sysconfdir %{_prefix}/etc
 %define _localstatedir %{_prefix}/var
@@ -38,8 +38,8 @@
 %global __php %{_bindir}/php
 
 %global redis_version %%VERSION%%
-%global php_zend_api %%PHP_API%%
-%global php_core_api %%PHP_API%%
+%global php_zend_api 20200930
+%global php_core_api 20200930
 
 %global pecl_name   redis
 %global with_zts    0
@@ -78,8 +78,6 @@ BuildRequires: liblzf-devel
 BuildRequires: redis >= 3
 %endif
 BuildRequires: %{?php_prefix}-json
-BuildRequires: make
-BuildRequires: gcc
 
 Requires:      %{?php_prefix}(zend-abi) = %{php_zend_api}
 Requires:      %{?php_prefix}(api) = %{php_core_api}

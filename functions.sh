@@ -5,6 +5,7 @@ PRODUCT_DIR=${cur_path}/packaging/build/$product
 RESULT_DIR=${PRODUCT_DIR}/$version-$revision/result
 BUILD_DIR=$cur_path/build
 BUILD_SPECS=$cur_path/build/SPECS
+BUILD_SRPMS=$BUILD_DIR/SRPMS
 BUILDER_NAME="LiteSpeedTech"
 BUILDER_EMAIL="info@litespeedtech.com"
 DIST_TAG=".el$(echo "$platform" | grep -oP '[0-9]+')"
@@ -159,11 +160,11 @@ prepare_source()
 build_rpms()
 {
     echo ">>>>>>>>>>>>>>>>>>>>>>> Build rpms"
-    if [ -f $BUILD_DIR/SRPMS/$product-$version-$revision.el*.src.rpm ]; then
+    if [ -f $BUILD_SRPMS/$product-$version-$revision.$DIST_TAG.src.rpm ]; then
         echo
         echo -e "\x1b[33m* Found existing source rpm, delete it and create new one \x1b[0m"
         echo
-        rm -f $BUILD_DIR/SRPMS/$product-$version-$revision.src.rpm
+        rm -f $BUILD_SRPMS/$product-$version-$revision.$DIST_TAG.src.rpm
     fi
 
     echo ">>>>>>>>>>>>>>>>>>>>>>> Build rpm source package"
@@ -176,7 +177,7 @@ build_rpms()
     fi
 
     echo ">>>>>>>>>>>>>>>>>>>>>>> Build rpm package with mock"
-    SRPM=$BUILD_DIR/SRPMS/${product}-${version}-${revision}${DIST_TAG}.src.rpm
+    SRPM=$BUILD_SRPMS/${product}-${version}-${revision}${DIST_TAG}.src.rpm
     for platform in $platforms;
     do
         mock -v --resultdir=$RESULT_DIR/$platform --disable-plugin=selinux -r $platform "$SRPM"

@@ -17,7 +17,7 @@
 %endif
 
 %define debug_package %{nil}
-%define php_prefix lsphp%%PHP_VER%%
+%define php_prefix lsphp74
 %define _prefix /usr/local/lsws/%{php_prefix}
 %define _sysconfdir %{_prefix}/etc
 %define _localstatedir %{_prefix}/var
@@ -38,18 +38,18 @@
 %global __php %{_bindir}/php
 
 %global redis_version %%VERSION%%
-%global php_zend_api %%PHP_API%%
-%global php_core_api %%PHP_API%%
+%global php_zend_api 20190902
+%global php_core_api 20190902
 
 %global pecl_name   redis
 %global with_zts    0
 %global with_tests  0
 %global with_igbin  1
-#%if 0%{?rhel} >= 8
-#%global with_lzf    0
-#%else
+%if 0%{?rhel} >= 8
+%global with_lzf    0
+%else
 %global with_lzf    1
-#%endif
+%endif
 # after 40-igbinary
 %global ini_name    50-%{pecl_name}.ini
 #global prever      RC2
@@ -78,8 +78,6 @@ BuildRequires: liblzf-devel
 BuildRequires: redis >= 3
 %endif
 BuildRequires: %{?php_prefix}-json
-BuildRequires: make
-BuildRequires: gcc
 
 Requires:      %{?php_prefix}(zend-abi) = %{php_zend_api}
 Requires:      %{?php_prefix}(api) = %{php_core_api}
@@ -332,6 +330,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
+%{?_licensedir:%license NTS/COPYING}
 %doc %{pecl_docdir}/%{pecl_name}
 %{pecl_xmldir}/%{name}.xml
 
