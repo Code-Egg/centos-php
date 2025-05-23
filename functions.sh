@@ -1,15 +1,32 @@
 #!/bin/bash
 #set -x
-BUILD_ROOT=$(pwd)/rpmbuild
-TOPDIR=$(pwd)/rpmbuild
-
-specify_versions()
-{
-    lsapiver="8.2"
-}
+cur_path=$(pwd)
+PRODUCT_DIR=${cur_path}/packaging/build/$product
+RESULT_DIR=${PRODUCT_DIR}/$version-$revision/result
+BUILD_DIR=$cur_path/build
+BUILD_SPECS=$cur_path/build/SPECS
+BUILDER_NAME="LiteSpeedTech"
+BUILDER_EMAIL="info@litespeedtech.com"
+DIST_TAG=".el$(echo "$platform" | grep -oP '[0-9]+')"
 
 set_paras()
 {
+    case "$platforms" in
+        ALL) platforms="epel-9-x86_64 epel-8-x86_64 epel-9-aarch64 epel-8-aarch64" ;;
+        e9x) platforms="epel-9-x86_64 " ;;
+        e8x) platforms="epel-8-x86_64 " ;;
+        e7x) platforms="epel-7-x86_64 " ;;
+        e6x) platforms="epel-6-x86_64 " ;;
+        e5x) platforms="epel-5-x86_64 " ;;
+        e9a) platforms="epel-9-aarch64 " ;;
+        e8a) platforms="epel-8-aarch64 " ;;
+        e7a) platforms="epel-7-aarch64 " ;;
+        e6i) platforms="epel-6-i386 " ;;
+        e5i) platforms="epel-5-i386 " ;;
+        *)   echo "Unrecognized platform: $platforms"; exit 1 ;;
+    esac
+    echo "The following platforms are specified: $platforms"
+
     PHP_EXTENSION=$(echo "${product}" | sed 's/pecl-//g' | sed 's/^[^-]*-//g')
     if [[ "${PHP_EXTENSION}" =~ 'lsphp' ]]; then
         PHP_EXTENSION=''
@@ -29,26 +46,46 @@ set_paras()
     elif [[ "${PHP_VERSION_NUMBER}" == '84' ]]; then
         PHP_VERSION_DATE='20240924'
     fi
-
     php_ver=${PHP_VERSION_NUMBER}
     php_api=${PHP_VERSION_DATE}
+}
+
+set_build_dir()
+{
+    if [ -d $RESULT_DIR ]; then
+        echo " find build directory exists "
+        clear_or_not=n
+        read -p "do you want to clear it before continuing? y/n:  " -t 15 clear_or_not
+        if [ x$clear_or_not == xy ]; then
+            " now clean the build directory "
+            rm -rf $RESULT_DIR/*
+        else
+            echo " the build directory will not be completely cleared "
+            echo " the existing build-result folder will be kept "
+            echo " only related files will be overwritten "
+            echo " but the source will be downloaded again "
+            cd $RESULT_DIR/
+            rm -rf `ls $BUILD_DIR | grep -v build-result`              
+        fi
+    else
+        mkdir -p $RESULT_DIR               
+    fi
+ 
+    for platform in $platforms;
+    do
+        mkdir -p $RESULT_DIR/$platform
+    done
 }
 
 generate_spec()
 {
     date=$(date +"%a %b %d %Y")
-
-    echo
-    echo
-    echo "BUILD_DIR is : "
-    echo $build_dir
-    echo
-    echo
-
-    if [ ! -f "$product_dir/changelog" ]; then            # where is $change_log defined?
+    echo "BUILD_DIR is: $BUILD_DIR"
+ 
+    if [ ! -f "$PRODUCT_DIR/changelog" ]; then            # where is $change_log defined?
         change_log="* $date $BUILDER_NAME $BUILDER_EMAIL\n- Initial spec creation for $product rpm";
     else
-        change_log=$(cat $product_dir/changelog);
+        change_log=$(cat $PRODUCT_DIR/changelog);
         change_log="* $date $BUILDER_NAME $BUILDER_EMAIL\n- $version-$revision spec created" . $change_log;
     fi
 
@@ -60,27 +97,24 @@ generate_spec()
         SPEC_FILE=lsphp-pecl-${PHP_EXTENSION}.spec.in
     fi
 
-    if [ -f "$build_dir/SPECS/$product-$version-$revision.spec" ]; then
+    if [ -f "$BUILD_DIR/SPECS/$product-$version-$revision.spec" ]; then
         echo
-        echo -e "\x1b[33m********** Found existing spec file, delete it and create new one **********\x1b[0m"
+        echo -e "\x1b[33m*Found existing spec file, delete it and create new one\x1b[0m"
         echo
-
-        rm -f $build_dir/SPECS/$product-$version-$revision.spec
+        rm -f $BUILD_DIR/SPECS/$product-$version-$revision.spec
     fi
 
-{
-    echo "s:%%PRODUCT%%:$product:g"
-    echo "s:%%VERSION%%:$version:g"
-    echo "s:%%BUILD%%:$revision:g"
-    echo "s:%%REVISION%%:$revision:g"
-    echo "s:%%LSAPIVER%%:$lsapiver:g"
-    echo "s:%%PHP_VER%%:$php_ver:g"
-    echo "s:%%PHP_API%%:$php_api:g"
-    echo "s:%%CHANGE_LOG%%:$change_log:"    # no change_log in the spec.in file
-}  > ./.sed.temp
-
-    sed -f ./.sed.temp ./specs/$SPEC_FILE > "$build_dir/SPECS/$product-$version-$revision.spec"
-
+    {
+        echo "s:%%PRODUCT%%:$product:g"
+        echo "s:%%VERSION%%:$version:g"
+        echo "s:%%BUILD%%:$revision:g"
+        echo "s:%%REVISION%%:$revision:g"
+        echo "s:%%LSAPIVER%%:$lsapiver:g"
+        echo "s:%%PHP_VER%%:$php_ver:g"
+        echo "s:%%PHP_API%%:$php_api:g"
+        echo "s:%%CHANGE_LOG%%:$change_log:"    # no change_log in the spec.in file
+    }  > ./.sed.temp
+    sed -f ./.sed.temp ./specs/$SPEC_FILE > "$BUILD_DIR/SPECS/$product-$version-$revision.spec"
 }
 
 prepare_source()
@@ -106,58 +140,66 @@ prepare_source()
     ;;
     esac
 
-    if [ -f $build_dir/SOURCES/$source ]; then
+    if [ -f $BUILD_DIR/SOURCES/$source ]; then
         echo
-        echo -e "\x1b[33m********** Found existing source tarball file, delete it and create new one !*********\x1b[0m"
+        echo -e "\x1b[33m* Found existing source tarball file, delete it and create new one !\x1b[0m"
         echo
 
         if [[ ${PHP_EXTENSION} != 'msgpack' ]]; then
-            rm -f $build_dir/SOURCES/$source
+            rm -f $BUILD_DIR/SOURCES/$source
         fi
     fi
 
-    if [ ! -f $build_dir/SOURCES/$source ]; then
-        wget --no-check-certificate -O $build_dir/SOURCES/$source $source_url
+    if [ ! -f $BUILD_DIR/SOURCES/$source ]; then
+        wget --no-check-certificate -O $BUILD_DIR/SOURCES/$source $source_url
     fi
-    echo "SOURCE: $build_dir/SOURCES/$source"
+    echo "SOURCE: $BUILD_DIR/SOURCES/$source"
 }
 
 build_rpms()
 {
-    echo ">>>>>>>>>>>>>>>>>>>>>>>Build rpms <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-    if [ -f $build_dir/SRPMS/$product-$version-$revision.el*.src.rpm ]; then
+    echo ">>>>>>>>>>>>>>>>>>>>>>> Build rpms"
+    if [ -f $BUILD_DIR/SRPMS/$product-$version-$revision.el*.src.rpm ]; then
         echo
-        echo -e "\x1b[33m*********** Found existing source rpm, delete it and create new one **********\x1b[0m"
+        echo -e "\x1b[33m* Found existing source rpm, delete it and create new one \x1b[0m"
         echo
-        rm -f $build_dir/SRPMS/$product-$version-$revision.src.rpm
+        rm -f $BUILD_DIR/SRPMS/$product-$version-$revision.src.rpm
     fi
 
-    echo
-    echo
-    echo ">>>>>>>>>>>>>>>>>>>>>>>>>>Start building rpm source package<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
+    echo ">>>>>>>>>>>>>>>>>>>>>>> Build rpm source package"
     echo "SPEC Location: $BUILD_SPECS/$product-$version-$revision.spec"
     rpmbuild --nodeps -bs $BUILD_SPECS/$product-$version-$revision.spec  \
-      --define "_topdir $TOPDIR" \
-      --define "dist $dist_tag"
-    RET=$?
-    echo ">>>>>>>>>>>>>    RET=$RET <<<<<<<<<<<<<<<<<<<<<<<<"
-    if [ $RET != 0 ]; then
-        exit 1
+      --define "_topdir $BUILD_DIR" \
+      --define "dist $DIST_TAG"
+    if [ $? != 0 ]; then
+        echo 'rpm source package has issue; exit!'; exit 1
     fi
-    echo ">>>>>>>>>>>>>>>>>>>>>>>>>>Finish building rpm source package<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"
-    echo
-    echo
 
-    echo
-    echo "Mock run into conditions for PHP main packages,openlitespeed and other products (non opcode cache packages.)"
-    echo
-
-
-    SRPM=$BUILD_ROOT/SRPMS/${product}-${version}-${revision}${dist_tag}.src.rpm
-
+    echo ">>>>>>>>>>>>>>>>>>>>>>> Build rpm package with mock"
+    SRPM=$BUILD_DIR/SRPMS/${product}-${version}-${revision}${DIST_TAG}.src.rpm
     for platform in $platforms;
     do
-        mock -v --resultdir=$result_dir/$platform --disable-plugin=selinux -r $platform "$SRPM"
-        RET=$?
+        mock -v --resultdir=$RESULT_DIR/$platform --disable-plugin=selinux -r $platform "$SRPM"
+        if [ $? != 0 ]; then
+            echo 'rpm build package has issue; exit!'; exit 1
+        fi
     done
+}
+
+list_packages()
+{
+    echo "##################################################"
+    echo " The package building process has finished ! "
+    echo "##################################################"
+    echo "########### Build Result Content #################"
+    ls -lRX $RESULT_DIR
+    echo " ################# End of Result #################"  
+}
+
+upload_to_server(){
+    echo 'test'
+}
+
+gen_dev_release(){
+    echo 'test'
 }

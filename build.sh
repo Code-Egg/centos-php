@@ -1,6 +1,16 @@
 #!/bin/bash
 #set -x
 #set -v
+target_server='repo-dev.litespeedtech.com'
+prod_server='rpms.litespeedtech.com'
+EPACE='        '
+PHP_V=84
+product=$1
+version=$2
+revision=$3
+platforms=$4
+lsapiver="8.2"
+PUSH_FLAG='OFF'
 
 source ./functions.sh #2>/dev/null
 if [ $(id -u) != "0" ]; then
@@ -8,74 +18,59 @@ if [ $(id -u) != "0" ]; then
     echo "Please run this script as root"
     exit 1
 fi
-
-product=$1
-version=$2
-revision=$3
-platforms=$4
-
-if [ "$platforms" == "ALL" ] ; then
-        platforms="epel-9-x86_64 epel-8-x86_64 epel-9-aarch64 epel-8-aarch64"
-else
-        platforms=`echo $platforms | sed s/e8a/epel-8-aarch64/ | sed s/e7a/epel-7-aarch64/ | sed s/e9a/epel-9-aarch64/ | sed s/e9x/epel-9-x86_64/ | sed s/e8x/epel-8-x86_64/ | sed  s/e7x/epel-7-x86_64/ | sed  s/e6x/epel-6-x86_64/ | sed  s/e6i/epel-6-i386/ | sed  s/e5x/epel-5-x86_64/ | sed  s/e5i/epel-5-i386/`
+chow(){
+    FLAG=${1}
+    shift
+    echo -e "\033[1m${EPACE}${FLAG}\033[0m${@}"
+}
+show_help()
+{
+    echo -e "\033[1mExamples\033[0m"
+    echo "${EPACE} ./build.sh [apcu|igbinary|imagick|...|memcached] [e9x|e8x|e9a|e8a] [amd64|arm64]"
+    echo "${EPACE} ./build.sh ioncube bookworm amd64"    
+    echo -e "\033[1mOPTIONS\033[0m"
+    echow '--version [NUMBER]'
+    echo "${EPACE}${EPACE}Specify package version number"    
+    echo "${EPACE}${EPACE}Example:./build.sh apcu noble amd64 --version 5.1.24"
+    echow '--revision [NUMBER]'
+    echo "${EPACE}${EPACE}Specify package revision number"    
+    echo "${EPACE}${EPACE}Example:./build.sh apcu noble amd64 --version 5.1.24 --revision 5"
+    echow '--push-flag'
+    echo "${EPACE}${EPACE}push packages to dev server."    
+    echo "${EPACE}${EPACE}Example:./build.sh apcu noble amd64 --push-flag"
+    echow '-H, --help'
+    echo "${EPACE}${EPACE}Display help and exit."
+    exit 0
+}
+if [ -z "${1}" ]; then
+    show_help
 fi
 
-echo "The following platforms are specified:"
-
-echo $platforms
-dist_tag=".el$(echo "$platform" | grep -oP '(?<=epel-)[0-9]+')"
-
-cur_path=$(pwd)
-product_dir=${cur_path}/packaging/build/$product
-result_dir=${product_dir}/$version-$revision/result
-
-build_dir=$cur_path/rpmbuild
-BUILD_SPECS=$cur_path/rpmbuild/SPECS
-BUILD_SOURCES=$cur_path/rpmbuild/SOURCES
-BUILD_SRPMS=$cur_path/rpmbuild/SRPMS
-
-BUILDER_NAME="LiteSpeedTech"
-BUILDER_EMAIL="info@litespeedtech.com"
-
-specify_versions
-set_paras
-
-echo " Process start time : "
-echo $(date)
-
-if [ -d $result_dir ]; then
-    echo
-    read -p "The result directory already existing, do you want to clear it? y/n:         " Yes_or_No
-    echo
-fi
-
-if [ "${Yes_or_No}" == y ]; then
-    echo
-    echo -e "\x1b[33m Clear the result directory for new build ! \x1b[0m"
-    echo
-    rm -rf $result_dir/*
-fi
-
-mkdir -p $result_dir
-
-for platform in $platforms;
-do
-    mkdir -p $result_dir/$platform
+while [ ! -z "${1}" ]; do
+    case $1 in
+        --version) shift
+            version="${1}"
+                ;;
+        --revision) shift
+            revision="${1}"
+                ;;
+        --push | --push-flag)
+            PUSH_FLAG='ON'
+                ;;
+        -[hH] | --help)
+            show_help
+                ;;           
+    esac
+    shift
 done
 
+set_paras
+set_build_dir
 generate_spec
 prepare_source
 build_rpms
-
-echo
-echo -e "\x1b[33m ********* Here is the build result dir content ********* \x1b[0m"
-echo
-ls -lRX $result_dir
-echo
-echo -e "\x1b[33m ********* End of building result ********* \x1b[0m"
-echo
-
-echo
-echo " Process finish time : "
-echo $(date)
-echo
+list_packages
+if [ ${PUSH_FLAG} = 'ON' ]; then
+    upload_to_server
+    gen_dev_release
+fi
