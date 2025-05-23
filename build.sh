@@ -18,7 +18,7 @@ if [ $(id -u) != "0" ]; then
     echo "Please run this script as root"
     exit 1
 fi
-chow(){
+echow(){
     FLAG=${1}
     shift
     echo -e "\033[1m${EPACE}${FLAG}\033[0m${@}"
