@@ -150,7 +150,6 @@ prepare_source()
       source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
       source="${PHP_EXTENSION}-${version}.tgz"
     ;;
-    ;;
     esac
 
     if [ -f $BUILD_DIR/SOURCES/$source ]; then
