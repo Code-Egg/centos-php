@@ -93,7 +93,7 @@ generate_spec()
     date=$(date +"%a %b %d %Y")
     echo "BUILD_DIR is: $BUILD_DIR"
  
-    if [ ! -f "$PRODUCT_DIR/changelog" ]; then            # where is $change_log defined?
+    if [ ! -f "$PRODUCT_DIR/changelog" ]; then
         change_log="* $date $BUILDER_NAME $BUILDER_EMAIL\n- Initial spec creation for $product rpm";
     else
         change_log=$(cat $PRODUCT_DIR/changelog);
@@ -147,7 +147,9 @@ prepare_source()
       source="php-$version.tar.gz"
     ;;
     *)
-      echo "Invalid product $product"
+      source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
+      source="${PHP_EXTENSION}-${version}.tgz"
+    ;;
     ;;
     esac
 
