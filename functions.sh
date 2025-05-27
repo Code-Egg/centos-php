@@ -8,7 +8,7 @@ BUILD_SPECS=$cur_path/build/SPECS
 BUILD_SRPMS=$BUILD_DIR/SRPMS
 BUILDER_NAME="LiteSpeedTech"
 BUILDER_EMAIL="info@litespeedtech.com"
-DIST_TAG=".el$(echo "$platform" | grep -oP '[0-9]+')"
+DIST_TAG=".el$(echo "$platforms" | grep -oP '[0-9]+')"
 
 check_input(){
     echo " ###########   Check_input  ############# "
