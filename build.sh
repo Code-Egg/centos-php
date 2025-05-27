@@ -53,6 +53,12 @@ if [ -z "${version}" ]; then
     version="$(grep ${product}= VERSION.txt | awk -F '=' '{print $2}')"
 fi
 
+if [ "${product}" == 'lsphp' ]; then
+    product="${product}"${PHP_V}
+else
+    product=lsphp${PHP_V}-"${product}"
+fi
+
 if [ -z "${revision}" ]; then
     TMP_DIST=$(echo $dists | awk '{ print $1 }')
     echo ${product} | grep '-' >/dev/null
