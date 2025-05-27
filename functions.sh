@@ -10,20 +10,30 @@ BUILDER_NAME="LiteSpeedTech"
 BUILDER_EMAIL="info@litespeedtech.com"
 DIST_TAG=".el$(echo "$platform" | grep -oP '[0-9]+')"
 
+check_input(){
+    echo " ###########   Check_input  ############# "
+    echo " Product name is $product "
+    echo " Version number is $version "
+    echo " Build revision is $revision "
+    echo " Required archs are $archs "
+    echo " Required platform is $platforms "
+}
+
 set_paras()
 {
+    if [[ "$platforms" =~ ^[0-9]+$ ]]; then
+        platforms=epel-${platforms}-$archs
+    fi
     case "$platforms" in
-        ALL) platforms="epel-9-x86_64 epel-8-x86_64 epel-9-aarch64 epel-8-aarch64" ;;
-        e9x) platforms="epel-9-x86_64 " ;;
-        e8x) platforms="epel-8-x86_64 " ;;
-        e7x) platforms="epel-7-x86_64 " ;;
-        e6x) platforms="epel-6-x86_64 " ;;
-        e5x) platforms="epel-5-x86_64 " ;;
-        e9a) platforms="epel-9-aarch64 " ;;
-        e8a) platforms="epel-8-aarch64 " ;;
-        e7a) platforms="epel-7-aarch64 " ;;
-        e6i) platforms="epel-6-i386 " ;;
-        e5i) platforms="epel-5-i386 " ;;
+        # ALL) platforms="epel-9-x86_64 epel-8-x86_64 epel-9-aarch64 epel-8-aarch64" ;;
+        e10x|epel-10-x86_64) platforms="epel-10-x86_64" ;;        
+        e9x|epel-9-x86_64) platforms="epel-9-x86_64" ;;
+        e8x|epel-8-x86_64) platforms="epel-8-x86_64" ;;
+        e7x|epel-7-x86_64) platforms="epel-7-x86_64" ;;
+        e10a|epel-10-aarch64) platforms="epel-10-aarch64" ;;        
+        e9a|epel-9-aarch64) platforms="epel-9-aarch64" ;;
+        e8a|epel-8-aarch64) platforms="epel-8-aarch64" ;;
+        e7a|epel-7-aarch64) platforms="epel-7-aarch64" ;;
         *)   echo "Unrecognized platform: $platforms"; exit 1 ;;
     esac
     echo "The following platforms are specified: $platforms"

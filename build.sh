@@ -6,11 +6,14 @@ prod_server='rpms.litespeedtech.com'
 EPACE='        '
 PHP_V=84
 product=$1
-version=$2
-revision=$3
-platforms=$4
+#version=$2
+#revision=$3
+platforms=$2
+input_archs=$3
 lsapiver="8.2"
 PUSH_FLAG='OFF'
+version=
+revision=
 
 source ./functions.sh #2>/dev/null
 if [ $(id -u) != "0" ]; then
@@ -66,6 +69,13 @@ if [ -z "${revision}" ]; then
     fi      
 fi
 
+if [ -z ${input_archs} ]; then
+    echo 'input_archs is not found, use default value x86_64'
+    archs='x86_64'
+else    
+    archs=$input_archs
+fi
+
 while [ ! -z "${1}" ]; do
     case $1 in
         --version) shift
@@ -84,6 +94,7 @@ while [ ! -z "${1}" ]; do
     shift
 done
 
+check_input
 set_paras
 set_build_dir
 generate_spec
