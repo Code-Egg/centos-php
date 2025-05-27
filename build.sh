@@ -6,8 +6,6 @@ prod_server='rpms.litespeedtech.com'
 EPACE='        '
 PHP_V=84
 product=$1
-#version=$2
-#revision=$3
 platforms=$2
 input_archs=$3
 lsapiver="8.2"
@@ -55,8 +53,10 @@ fi
 
 if [ "${product}" == 'lsphp' ]; then
     product="${product}"${PHP_V}
+elif [ "${product}" == 'ioncube' ] || [ "${product}" == 'pear' ]; then
+    product="${product}"${PHP_V}    
 else
-    product=lsphp${PHP_V}-"${product}"
+    product=lsphp${PHP_V}-pecl-"${product}"
 fi
 
 if [ -z "${revision}" ]; then

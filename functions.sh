@@ -131,20 +131,20 @@ generate_spec()
 prepare_source()
 {
   case "$product" in
+      lsphp*)
+      source_url="http://us2.php.net/distributions/php-$version.tar.gz"
+      source="php-$version.tar.gz"
+    ;;
     *-pear)
       source_url="http://download.pear.php.net/package/PEAR-${version}.tgz"
       source="PEAR-${version}.tgz"
     ;;
+    *-ioncube)
+      # No more source needed
+    ;;    
     *-pecl-*)
       source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
       source="${PHP_EXTENSION}-${version}.tgz"
-    ;;
-    *-ioncube)
-      # No more source needed
-    ;;
-    lsphp*)
-      source_url="http://us2.php.net/distributions/php-$version.tar.gz"
-      source="php-$version.tar.gz"
     ;;
     *)
       source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
