@@ -131,26 +131,26 @@ generate_spec()
 
 prepare_source()
 {
-  case "$product" in
-    *-pecl-*)
-      source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
-      source="${PHP_EXTENSION}-${version}.tgz"
-    ;;  
-    lsphp)
-      source_url="http://us2.php.net/distributions/php-$version.tar.gz"
-      source="php-$version.tar.gz"
-    ;;
-    *-pear)
-      source_url="http://download.pear.php.net/package/PEAR-${version}.tgz"
-      source="PEAR-${version}.tgz"
-    ;;
-    *-ioncube)
-      # No more source needed
-    ;;    
-    *)
-      source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
-      source="${PHP_EXTENSION}-${version}.tgz"
-    ;;
+    case "$product" in
+        *-pecl-*)
+        source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
+        source="${PHP_EXTENSION}-${version}.tgz"
+        ;;  
+        lsphp)
+        source_url="http://us2.php.net/distributions/php-$version.tar.gz"
+        source="php-$version.tar.gz"
+        ;;
+        *-pear|pear)
+        source_url="http://download.pear.php.net/package/PEAR-${version}.tgz"
+        source="PEAR-${version}.tgz"
+        ;;
+        *-ioncube|ioncube)
+        # No more source needed
+        ;;    
+        *)
+        source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
+        source="${PHP_EXTENSION}-${version}.tgz"
+        ;;
     esac
 
     if [ -f $BUILD_DIR/SOURCES/$source ]; then
