@@ -48,7 +48,7 @@
 #global gh_date     20151204
 
 %global ini_name    40-%{pecl_name}.ini
-%global upstream_version 3.8.0
+%global upstream_version 3.7.0
 #global upstream_prever  RC2
 
 %global sources          %{pecl_name}-%{upstream_version}%{?upstream_prever}
@@ -60,6 +60,9 @@ Release:       %%BUILD%%%{?dist}%{!?nophptag:%(%{__php} -r 'echo ".".PHP_MAJOR_V
 Source0:       http://pecl.php.net/get/%{pecl_name}-%{version}.tgz
 License:       PHP-3.01
 URL:           https://pecl.php.net/package/imagick
+
+Patch0:        %{pecl_name}-tests.patch
+Patch1:        %{pecl_name}-pr690.patch
 
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: make
@@ -108,7 +111,8 @@ These are the files needed to compile programs using %{pecl_name} extension.
 %setup -q -c
 mv %{pecl_name}-%{upstream_version}%{?upstream_prever} NTS
 cd NTS
-
+%patch -P0 -p1
+%patch -P1 -p1
 
 : Avoid arginfo to be regenerated
 rm *.stub.php
@@ -248,6 +252,3 @@ fi
 - add patch for PHP 7.4 from
   https://github.com/Imagick/imagick/pull/296
 - re-enable test suite
-
-
-
