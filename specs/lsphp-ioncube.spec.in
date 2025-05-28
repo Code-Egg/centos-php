@@ -58,7 +58,7 @@ Release:       %{ioncube_build}%{?dist}%{!?scl:%{!?nophptag:%(%{__php} -r 'echo 
 License:       Distribuable
 
 URL:           http://www.ioncube.com
-#Source1:       ioncube_loaders_lin_x86-64_%{ioncube_version}.tar.gz
+#Source1:       ioncube_loaders_lin_x86-64_%%{ioncube_version}.tar.gz
 
 BuildRequires: wget
 BuildRequires: %{?php_prefix}
