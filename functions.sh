@@ -68,7 +68,7 @@ set_build_dir()
         clear_or_not=n
         read -p "do you want to clear it before continuing? y/n:  " -t 15 clear_or_not
         if [ x$clear_or_not == xy ]; then
-            " now clean the build directory "
+            echo " now clean the build directory "
             rm -rf $RESULT_DIR/*
         else
             echo " the build directory will not be completely cleared "
@@ -131,6 +131,10 @@ generate_spec()
 prepare_source()
 {
   case "$product" in
+    *-pecl-*)
+      source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
+      source="${PHP_EXTENSION}-${version}.tgz"
+    ;;  
       lsphp*)
       source_url="http://us2.php.net/distributions/php-$version.tar.gz"
       source="php-$version.tar.gz"
@@ -142,10 +146,6 @@ prepare_source()
     *-ioncube)
       # No more source needed
     ;;    
-    *-pecl-*)
-      source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
-      source="${PHP_EXTENSION}-${version}.tgz"
-    ;;
     *)
       source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
       source="${PHP_EXTENSION}-${version}.tgz"
