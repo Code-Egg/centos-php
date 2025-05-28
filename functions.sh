@@ -76,7 +76,7 @@ set_build_dir()
             echo " only related files will be overwritten "
             echo " but the source will be downloaded again "
             cd $RESULT_DIR/
-            rm -rf `ls $BUILD_DIR | grep -v build-result`              
+            rm -rf `ls $BUILD_DIR | grep -v build-result`          
         fi
     else
         mkdir -p $RESULT_DIR               
@@ -90,6 +90,7 @@ set_build_dir()
 
 generate_spec()
 {
+    echo ">>>>>>>>>>>>>>>>>>>>>>> Build spec"
     date=$(date +"%a %b %d %Y")
     echo "BUILD_DIR is: $BUILD_DIR"
  
@@ -123,7 +124,7 @@ generate_spec()
         echo "s:%%LSAPIVER%%:$lsapiver:g"
         echo "s:%%PHP_VER%%:$php_ver:g"
         echo "s:%%PHP_API%%:$php_api:g"
-        echo "s:%%CHANGE_LOG%%:$change_log:"    # no change_log in the spec.in file
+        echo "s:%%CHANGE_LOG%%:$change_log:"
     }  > ./.sed.temp
     sed -f ./.sed.temp ./specs/$SPEC_FILE > "$BUILD_DIR/SPECS/$product-$version-$revision.spec"
 }
@@ -135,7 +136,7 @@ prepare_source()
       source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
       source="${PHP_EXTENSION}-${version}.tgz"
     ;;  
-      lsphp*)
+    lsphp${PHP_V})
       source_url="http://us2.php.net/distributions/php-$version.tar.gz"
       source="php-$version.tar.gz"
     ;;
@@ -153,10 +154,7 @@ prepare_source()
     esac
 
     if [ -f $BUILD_DIR/SOURCES/$source ]; then
-        echo
         echo -e "\x1b[33m* Found existing source tarball file, delete it and create new one !\x1b[0m"
-        echo
-
         if [[ ${PHP_EXTENSION} != 'msgpack' ]]; then
             rm -f $BUILD_DIR/SOURCES/$source
         fi

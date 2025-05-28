@@ -27,18 +27,18 @@ echow(){
 show_help()
 {
     echo -e "\033[1mExamples\033[0m"
-    echo "${EPACE} ./build.sh [apcu|igbinary|imagick|...|memcached] [e9x|e8x|e9a|e8a] [amd64|arm64]"
-    echo "${EPACE} ./build.sh ioncube bookworm amd64"    
+    echo "${EPACE} ./build.sh [apcu|igbinary|imagick|...|memcached] [8|9|10] [x86_64|aarch64]"
+    echo "${EPACE} ./build.sh ioncube 9 x86_64"    
     echo -e "\033[1mOPTIONS\033[0m"
     echow '--version [NUMBER]'
     echo "${EPACE}${EPACE}Specify package version number"    
-    echo "${EPACE}${EPACE}Example:./build.sh apcu noble amd64 --version 5.1.24"
+    echo "${EPACE}${EPACE}Example:./build.sh ioncube 9 x86_64 --version 5.1.24"
     echow '--revision [NUMBER]'
     echo "${EPACE}${EPACE}Specify package revision number"    
-    echo "${EPACE}${EPACE}Example:./build.sh apcu noble amd64 --version 5.1.24 --revision 5"
+    echo "${EPACE}${EPACE}Example:./build.sh ioncube 9 x86_64 --version 5.1.24 --revision 5"
     echow '--push-flag'
     echo "${EPACE}${EPACE}push packages to dev server."    
-    echo "${EPACE}${EPACE}Example:./build.sh apcu noble amd64 --push-flag"
+    echo "${EPACE}${EPACE}Example:./build.sh ioncube 9 x86_64 --push-flag"
     echow '-H, --help'
     echo "${EPACE}${EPACE}Display help and exit."
     exit 0
