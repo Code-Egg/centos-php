@@ -9,6 +9,7 @@ on:
         type: choice
         options:
           - '"lsphp"'
+          - '"imap"'
           - '"apcu"'
           - '"imagick"'
           - '"ioncube"'
@@ -17,7 +18,7 @@ on:
           - '"pear"'
           - '"redis"'
           - '"igbinary"'
-          - '"lsphp","pear","igbinary","apcu","imagick","ioncube","msgpack","memcached","redis"'
+          - '"lsphp","imap","pear","igbinary","apcu","imagick","ioncube","msgpack","memcached","redis"'
       version:
         description: 'version number'
         type: number
