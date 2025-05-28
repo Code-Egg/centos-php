@@ -54,7 +54,7 @@ fi
 if [ "${product}" == 'lsphp' ]; then
     product="${product}"${PHP_V}
 elif [ "${product}" == 'ioncube' ] || [ "${product}" == 'pear' ]; then
-    product="${product}"${PHP_V}    
+    product="${product}"
 else
     product=lsphp${PHP_V}-pecl-"${product}"
 fi
