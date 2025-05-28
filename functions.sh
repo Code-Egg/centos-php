@@ -136,7 +136,7 @@ prepare_source()
         source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
         source="${PHP_EXTENSION}-${version}.tgz"
         ;;  
-        lsphp)
+        lsphp*)
         source_url="http://us2.php.net/distributions/php-$version.tar.gz"
         source="php-$version.tar.gz"
         ;;
