@@ -127,29 +127,36 @@ generate_spec()
         echo "s:%%CHANGE_LOG%%:$change_log:"
     }  > ./.sed.temp
     sed -f ./.sed.temp ./specs/$SPEC_FILE > "$BUILD_DIR/SPECS/$product-$version-$revision.spec"
+    echo "Build spec <<<<<<<<<<<<<<<<<<<<<<<"
 }
 
 prepare_source()
 {
+    echo ">>>>>>>>>>>>>>>>>>>>>>> Build source"
     case "$product" in
         *-pecl-*)
-        source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
-        source="${PHP_EXTENSION}-${version}.tgz"
+            echo ">>>> Match pecl"
+            source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
+            source="${PHP_EXTENSION}-${version}.tgz"
         ;;  
         lsphp*)
-        source_url="http://us2.php.net/distributions/php-$version.tar.gz"
-        source="php-$version.tar.gz"
+            echo ">>>> Match lsphp"
+            source_url="http://us2.php.net/distributions/php-$version.tar.gz"
+            source="php-$version.tar.gz"
         ;;
         *-pear|pear)
-        source_url="http://download.pear.php.net/package/PEAR-${version}.tgz"
-        source="PEAR-${version}.tgz"
+            echo ">>>> Match pear"
+            source_url="http://download.pear.php.net/package/PEAR-${version}.tgz"
+            source="PEAR-${version}.tgz"
         ;;
         *-ioncube|ioncube)
-        # No more source needed
+            echo ">>>> Match ioncube"
+            # No more source needed
         ;;    
         *)
-        source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
-        source="${PHP_EXTENSION}-${version}.tgz"
+            echo ">>>> Match *"
+            source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
+            source="${PHP_EXTENSION}-${version}.tgz"
         ;;
     esac
 
@@ -164,6 +171,7 @@ prepare_source()
         wget --no-check-certificate -O $BUILD_DIR/SOURCES/$source $source_url
     fi
     echo "SOURCE: $BUILD_DIR/SOURCES/$source"
+    echo "Build source <<<<<<<<<<<<<<<<<<<<<<<"
 }
 
 build_rpms()
