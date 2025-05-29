@@ -56,8 +56,10 @@ POP3, and local mailbox access methods.
 %setup -q -n imap-%{version}
 
 # Don't install/register tests
+sed -e 's/role="test"/role="src"/' \
+    %{?_licensedir:-e '/LICENSE/s/role="doc"/role="src"/' } \
+    -i package.xml || echo "Skipping package.xml patch (file not found)"
 
-cd imap-%{version}
 
 # Sanity check, really often broken
 extver=$(sed -n '/#define PHP_IMAP_VERSION/{s/.* "//;s/".*$//;p}' php_imap.h)
@@ -65,7 +67,7 @@ if test "x${extver}" != "x%{version}%{?prever}"; then
    : Error: Upstream extension version is ${extver}, expecting %{version}%{?prever}.
    exit 1
 fi
-cd ..
+
 
 : Create the configuration file
 cat >%{ini_name} << 'EOF'
