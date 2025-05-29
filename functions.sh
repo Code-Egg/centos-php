@@ -139,11 +139,6 @@ prepare_source()
             source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
             source="${PHP_EXTENSION}-${version}.tgz"
         ;;  
-        lsphp*)
-            echo ">>>> Match lsphp"
-            source_url="http://us2.php.net/distributions/php-$version.tar.gz"
-            source="php-$version.tar.gz"
-        ;;
         *-pear|pear)
             echo ">>>> Match pear"
             source_url="http://download.pear.php.net/package/PEAR-${version}.tgz"
@@ -152,7 +147,12 @@ prepare_source()
         *-ioncube|ioncube)
             echo ">>>> Match ioncube"
             # No more source needed
-        ;;    
+        ;;         
+        lsphp*)
+            echo ">>>> Match lsphp"
+            source_url="http://us2.php.net/distributions/php-$version.tar.gz"
+            source="php-$version.tar.gz"
+        ;;
         *)
             echo ">>>> Match *"
             source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
