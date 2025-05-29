@@ -25,6 +25,8 @@ License:        PHP-3.01
 URL:            https://pecl.php.net/package/%{pecl_name}
 Source0:        http://pecl.php.net/get/%{pecl_name}-%{version}.tgz
 
+BuildRequires:  %{php_prefix}
+BuildRequires:  %{php_prefix}-devel
 BuildRequires:  make
 BuildRequires:  %{?dtsprefix}gcc
 BuildRequires:  %{?php_prefix}-devel
@@ -56,9 +58,13 @@ POP3, and local mailbox access methods.
 %setup -q -n imap-%{version}
 
 # Don't install/register tests
-sed -e 's/role="test"/role="src"/' \
-    %{?_licensedir:-e '/LICENSE/s/role="doc"/role="src"/' } \
-    -i package.xml || echo "Skipping package.xml patch (file not found)"
+if [ -f package.xml ]; then
+    sed -e 's/role="test"/role="src"/' \
+      %{?_licensedir:-e '/LICENSE/s/role="doc"/role="src"/' } \
+      -i package.xml
+else
+    echo "Skipping package.xml patch (file not found)"
+fi
 
 
 # Sanity check, really often broken
