@@ -53,14 +53,11 @@ POP3, and local mailbox access methods.
 
 
 %prep
-%setup -q -n php-%{version}
+%setup -q -n imap-%{version}
 
 # Don't install/register tests
-sed -e 's/role="test"/role="src"/' \
-    %{?_licensedir:-e '/LICENSE/s/role="doc"/role="src"/' } \
-    -i package.xml
 
-cd ext/%{pecl_name}
+cd imap-%{version}
 
 # Sanity check, really often broken
 extver=$(sed -n '/#define PHP_IMAP_VERSION/{s/.* "//;s/".*$//;p}' php_imap.h)
@@ -78,7 +75,7 @@ EOF
 
 
 %build
-cd ext/%{pecl_name}
+cd imap-%{version}
 %{_bindir}/phpize
 sed -e 's/INSTALL_ROOT/DESTDIR/' -i build/Makefile.global
 
@@ -92,7 +89,7 @@ sed -e 's/INSTALL_ROOT/DESTDIR/' -i build/Makefile.global
 %make_build
 
 %install
-cd ext/%{pecl_name}
+cd imap-%{version}
 %make_install INSTALL_ROOT=%{buildroot}
 
 # ini file
