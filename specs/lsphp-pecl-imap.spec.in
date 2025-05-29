@@ -114,9 +114,8 @@ EOF
     --modules | grep '^imap$'
 
 %files
-%license %{sources}/LICENSE
-%doc %{pecl_docdir}/%{pecl_name}
-%{pecl_xmldir}/%{name}.xml
+%license LICENSE
+
 
 %config(noreplace) %{php_inidir}/%{ini_name}
 %{php_extdir}/%{pecl_name}.so
