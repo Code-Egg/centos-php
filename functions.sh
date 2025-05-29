@@ -199,6 +199,9 @@ build_rpms()
     SRPM=$BUILD_SRPMS/${product}-${version}-${revision}${DIST_TAG}.src.rpm
     for platform in $platforms;
     do
+        if [ "${platforms}" == 'e10x' ] || [ "${platforms}" == 'epel-10-x86_64' ] || [ "${platforms}" == '10' ]; then
+            mock -r $platform --copyin compiled/10/ccache /usr/bin/ccache
+        fi    
         mock -v --resultdir=$RESULT_DIR/$platform --disable-plugin=selinux -r $platform "$SRPM"
         if [ $? != 0 ]; then
             echo 'rpm build package has issue; exit!'; exit 1
