@@ -77,7 +77,7 @@ EOF
 
 
 %build
-cd imap-%{version}
+
 %{_bindir}/phpize
 sed -e 's/INSTALL_ROOT/DESTDIR/' -i build/Makefile.global
 
@@ -91,7 +91,7 @@ sed -e 's/INSTALL_ROOT/DESTDIR/' -i build/Makefile.global
 %make_build
 
 %install
-cd imap-%{version}
+
 %make_install INSTALL_ROOT=%{buildroot}
 
 # ini file
