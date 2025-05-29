@@ -17,7 +17,7 @@
 %global php_zend_api %%PHP_API%%
 %global php_core_api %%PHP_API%%
 
-Name:           %{php_prefix}-%{pecl_name}
+Name:           %{php_prefix}-pecl-%{pecl_name}
 Summary:        IMAP extension
 Version:        %%VERSION%%
 Release:        %%BUILD%%%{?dist}%{!?scl:%{!?nophptag:%(%{__php} -r 'echo ".".PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')}}
