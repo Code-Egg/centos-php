@@ -168,7 +168,9 @@ prepare_source()
     fi
 
     if [ ! -f $BUILD_DIR/SOURCES/$source ]; then
-        wget --no-check-certificate -O $BUILD_DIR/SOURCES/$source $source_url
+        if [[ ${PHP_EXTENSION} != 'ioncube' ]]; then
+            wget --no-check-certificate -O $BUILD_DIR/SOURCES/$source $source_url
+        fi    
     fi
     echo "SOURCE: $BUILD_DIR/SOURCES/$source"
     echo "Build source <<<<<<<<<<<<<<<<<<<<<<<"
