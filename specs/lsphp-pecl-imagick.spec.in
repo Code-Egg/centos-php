@@ -56,7 +56,7 @@
 Summary:       Extension to create and modify images using ImageMagick
 Name:          %{?php_prefix}-pecl-imagick
 Version:       %{upstream_version}%{?upstream_prever:~%{upstream_prever}}
-Release:       %%BUILD%%%{?dist}%{!?nophptag:%(%{__php} -r 'echo ".".PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')}
+Release:       %%BUILD%%%{?dist}%{!?nophptag:%(%{__php} -r 'echo ".".PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null)}
 Source0:       http://pecl.php.net/get/%{pecl_name}-%{version}.tgz
 License:       PHP-3.01
 URL:           https://pecl.php.net/package/imagick
@@ -91,7 +91,7 @@ Conflicts:     %{?php_prefix}-pecl-gmagick
 Imagick is a native php extension to create and modify images
 using the ImageMagick API.
 
-Package built for PHP %(%{__php} -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')%{?scl: as Software Collection (%{scl} by %{?scl_vendor}%{!?scl_vendor:rh})}.
+Package built for PHP %(%{__php} -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null)%{?scl: as Software Collection (%{scl} by %{?scl_vendor}%{!?scl_vendor:rh})}.
 
 
 %package devel

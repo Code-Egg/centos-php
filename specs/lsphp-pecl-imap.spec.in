@@ -20,7 +20,7 @@
 Name:           %{php_prefix}-pecl-%{pecl_name}
 Summary:        IMAP extension
 Version:        %%VERSION%%
-Release:        %%BUILD%%%{?dist}%{!?scl:%{!?nophptag:%(%{__php} -r 'echo ".".PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')}}
+Release:        %%BUILD%%%{?dist}%{!?scl:%{!?nophptag:%(%{__php} -r 'echo ".".PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null)}}
 License:        PHP-3.01
 URL:            https://pecl.php.net/package/%{pecl_name}
 Source0:        http://pecl.php.net/get/%{pecl_name}-%{version}.tgz

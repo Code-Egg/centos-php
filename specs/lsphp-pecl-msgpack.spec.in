@@ -58,7 +58,7 @@
 Summary:       API for communicating with MessagePack serialization
 Name:          %{?php_prefix}-pecl-msgpack
 Version:       %{msgpack_version}
-Release:       %%BUILD%%%{?dist}%{!?scl:%{!?nophptag:%(%{__php} -r 'echo ".".PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')}}
+Release:       %%BUILD%%%{?dist}%{!?scl:%{!?nophptag:%(%{__php} -r 'echo ".".PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null)}}
 Source:        http://pecl.php.net/get/%{pecl_name}-%{version}.tgz
 License:       BSD
 Group:         Development/Languages
@@ -130,7 +130,7 @@ a perfect replacement.
 
 This extension is still EXPERIMENTAL.
 
-Package built for PHP %(%{__php} -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')%{?scl: as Software Collection (%{scl} by %{?scl_vendor}%{!?scl_vendor:rh})}.
+Package built for PHP %(%{__php} -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null)%{?scl: as Software Collection (%{scl} by %{?scl_vendor}%{!?scl_vendor:rh})}.
 
 
 %package devel

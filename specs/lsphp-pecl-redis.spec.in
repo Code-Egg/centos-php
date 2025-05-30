@@ -57,7 +57,7 @@
 Summary:       Extension for communicating with the Redis key-value store
 Name:          %{?php_prefix}-pecl-redis
 Version:       %{redis_version}
-Release:       %%BUILD%%%{?dist}%{!?scl:%{!?nophptag:%(%{__php} -r 'echo ".".PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')}}
+Release:       %%BUILD%%%{?dist}%{!?scl:%{!?nophptag:%(%{__php} -r 'echo ".".PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null)}}
 Source0:       http://pecl.php.net/get/%{pecl_name}-%{version}%{?prever}.tgz
 License:       PHP
 Group:         Development/Languages
@@ -138,7 +138,7 @@ This Redis client implements most of the latest Redis API.
 As method only only works when also implemented on the server side,
 some doesn't work with an old redis server version.
 
-Package built for PHP %(%{__php} -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')%{?scl: as Software Collection (%{scl} by %{?scl_vendor}%{!?scl_vendor:rh})}.
+Package built for PHP %(%{__php} -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null)%{?scl: as Software Collection (%{scl} by %{?scl_vendor}%{!?scl_vendor:rh})}.
 
 
 %prep

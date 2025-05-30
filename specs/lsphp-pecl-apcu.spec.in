@@ -50,7 +50,7 @@
 Name:           %{php_prefix}-pecl-apcu
 Summary:        APC User Cache
 Version:        %{apcuver}
-Release:        %%BUILD%%%{?dist}%{!?nophptag:%(%{__php} -r 'echo ".".PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')}
+Release:        %%BUILD%%%{?dist}%{!?nophptag:%(%{__php} -r 'echo ".".PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null)}
 Source0:        http://pecl.php.net/get/apcu-%{version}.tgz
 Source1:        apcu-5.1.19.ini
 Source2:        apcu-panel.conf

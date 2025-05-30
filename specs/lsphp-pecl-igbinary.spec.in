@@ -47,7 +47,7 @@
 Summary:        Replacement for the standard PHP serializer
 Name:           %{php_prefix}-pecl-igbinary
 Version:        %%VERSION%%
-Release:        %%BUILD%%%{?dist}%{!?nophptag:%(%{__php} -r 'echo ".".PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')}
+Release:        %%BUILD%%%{?dist}%{!?nophptag:%(%{__php} -r 'echo ".".PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null)}
 Source0:        http://pecl.php.net/get/%{extname}-%{version}.tgz
 License:        BSD
 Group:          System Environment/Libraries

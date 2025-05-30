@@ -54,7 +54,7 @@
 Name:          %{?php_prefix}-ioncube 
 Summary:       Loader for ionCube Encoded Files with ionCube 24 support
 Version:       %{ioncube_version}
-Release:       %{ioncube_build}%{?dist}%{!?scl:%{!?nophptag:%(%{__php} -r 'echo ".".PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')}}
+Release:       %{ioncube_build}%{?dist}%{!?scl:%{!?nophptag:%(%{__php} -r 'echo ".".PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null)}}
 License:       Distribuable
 
 URL:           http://www.ioncube.com
@@ -111,7 +111,7 @@ Obsoletes:     php73w-ioncube-loader <= %{version}
 %description
 Loader for ionCube Encoded Files with ionCube 24 support.
 
-Package built for PHP %(%{__php} -n -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')%{?scl: as Software Collection (%{scl} by %{?scl_vendor}%{!?scl_vendor:rh})}.
+Package built for PHP %(%{__php} -n -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null)%{?scl: as Software Collection (%{scl} by %{?scl_vendor}%{!?scl_vendor:rh})}.
 
 
 %prep
