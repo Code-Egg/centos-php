@@ -222,8 +222,9 @@ build_rpms()
     do
         if [ "${platforms}" == 'e10x' ] || [ "${platforms}" == 'epel-10-x86_64' ] || [ "${platforms}" == '10' ]; then
             mock -r $platform --copyin compiled/10/ccache /usr/bin/ccache
-        fi    
-        mock -v --resultdir=$RESULT_DIR/$platform --disable-plugin=selinux -r $platform "$SRPM"
+        fi
+        # Use mock -v to enable debug or mock --quiet to silence 
+        mock --resultdir=$RESULT_DIR/$platform --disable-plugin=selinux -r $platform "$SRPM"
         if [ $? != 0 ]; then
             echo 'rpm build package has issue; exit!'; exit 1
         fi
@@ -235,7 +236,7 @@ list_packages()
     echoY "########### Build Result Content #################"
     ls -lRX $RESULT_DIR
     echoY " ################# End of Result #################"  
-    ls -lRX $RESULT_DIR | grep ${product}-${version}-${revision}${DIST_TAG}.*.rpm > dev/null
+    ls -lRX $RESULT_DIR | grep ${product}-${version}-${revision}${DIST_TAG}.*.rpm >/dev/null
     if [ ${?} != 0 ]; then
         echoR "${product}-${version}-${revision}${DIST_TAG}.*.rpm is not found!"
         exit 1
