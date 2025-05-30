@@ -3,13 +3,36 @@
 cur_path=$(pwd)
 DIST_TAG=".el$(echo "$platforms" | grep -oP '\d+' | head -n1)"
 
+echow()
+{
+    FLAG=${1}
+    shift
+    echo -e "\033[1m${EPACE}${FLAG}\033[0m${@}"
+}
 echoB()
 {
     FLAG=$1
     shift
     echo -e "\033[38;1;34m$FLAG\033[39m$@"
 }
-
+echoY()
+{
+    FLAG=$1
+    shift
+    echo -e "\033[38;5;148m$FLAG\033[39m$@"
+}
+echoR()
+{
+    FLAG=$1
+    shift
+    echo -e "\033[38;5;203m$FLAG\033[39m$@"
+}
+echoG()
+{
+    FLAG=$1
+    shift
+    echo -e "\033[38;5;71m$FLAG\033[39m$@"
+}
 check_input()
 {
     echo " ###########   Check_input  ############# "
@@ -27,15 +50,15 @@ set_paras()
     fi
     case "$platforms" in
         # ALL) platforms="epel-9-x86_64 epel-8-x86_64 epel-9-aarch64 epel-8-aarch64" ;;
-        e10x|epel-10-x86_64) platforms="epel-10-x86_64" ;;        
-        e9x|epel-9-x86_64) platforms="epel-9-x86_64" ;;
-        e8x|epel-8-x86_64) platforms="epel-8-x86_64" ;;
-        e7x|epel-7-x86_64) platforms="epel-7-x86_64" ;;
+        e10x|epel-10-x86_64)  platforms="epel-10-x86_64"  ;;        
+        e9x|epel-9-x86_64)    platforms="epel-9-x86_64"   ;;
+        e8x|epel-8-x86_64)    platforms="epel-8-x86_64"   ;;
+        e7x|epel-7-x86_64)    platforms="epel-7-x86_64"   ;;
         e10a|epel-10-aarch64) platforms="epel-10-aarch64" ;;        
-        e9a|epel-9-aarch64) platforms="epel-9-aarch64" ;;
-        e8a|epel-8-aarch64) platforms="epel-8-aarch64" ;;
-        e7a|epel-7-aarch64) platforms="epel-7-aarch64" ;;
-        *)   echo "Unrecognized platform: $platforms"; exit 1 ;;
+        e9a|epel-9-aarch64)   platforms="epel-9-aarch64"  ;;
+        e8a|epel-8-aarch64)   platforms="epel-8-aarch64"  ;;
+        e7a|epel-7-aarch64)   platforms="epel-7-aarch64"  ;;
+        *)  echo "Unrecognized platform: $platforms"; exit 1 ;;
     esac
     echo "The following platforms are specified: $platforms"
     PHP_VERSION_NUMBER=$(echo "${product}" | sed 's/[^0-9]*//g')
@@ -61,14 +84,10 @@ set_paras()
     PRODUCT_DIR=${cur_path}/packaging/build/$product
     RESULT_DIR=${PRODUCT_DIR}/$version-$revision/result
     BUILD_DIR=$cur_path/build
-    BUILD_SPECS=$cur_path/build/SPECS
+    BUILD_SPECS=$BUILD_DIR/SPECS
     BUILD_SRPMS=$BUILD_DIR/SRPMS
     BUILDER_NAME="LiteSpeedTech"
     BUILDER_EMAIL="info@litespeedtech.com"
-    echo "PRODUCT_DIR: $PRODUCT_DIR"
-    echo "RESULT_DIR: $RESULT_DIR"
-    echo "BUILD_DIR: $BUILD_DIR"
-    echo "BUILD_SPECS: $BUILD_SPECS" 
 }
 
 set_build_dir()
@@ -82,10 +101,8 @@ set_build_dir()
             echo " now clean the build directory "
             rm -rf $RESULT_DIR/*
         else
-            echo " the build directory will not be completely cleared "
-            echo " the existing build-result folder will be kept "
-            echo " only related files will be overwritten "
-            echo " but the source will be downloaded again "
+            echo 'The build directory will be retained, keeping the existing build-result folder.'
+            echo 'Only relevant files will be updated.'
             cd $RESULT_DIR/
             rm -rf `ls $BUILD_DIR | grep -v build-result`          
         fi
@@ -103,7 +120,7 @@ generate_spec()
 {
     echoB "${FPACE} - Generate spec"
     date=$(date +"%a %b %d %Y")
-    echo "BUILD_DIR is: $BUILD_DIR"
+    echoG "BUILD_DIR is: $BUILD_DIR"
  
     if [ ! -f "$PRODUCT_DIR/changelog" ]; then
         change_log="* $date $BUILDER_NAME $BUILDER_EMAIL\n- Initial spec creation for $product rpm";
@@ -121,9 +138,7 @@ generate_spec()
     fi
 
     if [ -f "$BUILD_DIR/SPECS/$product-$version-$revision.spec" ]; then
-        echo
-        echo -e "\x1b[33m*Found existing spec file, delete it and create new one\x1b[0m"
-        echo
+        echoY "Found existing spec file, delete it and create new one"
         rm -f $BUILD_DIR/SPECS/$product-$version-$revision.spec
     fi
 
@@ -145,33 +160,32 @@ prepare_source()
     echoB "${FPACE} - Prepare source"
     case "$product" in
         *-pecl-*)
-            echo ">>>> Match pecl"
+            echoG " - Match pecl"
             source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
             source="${PHP_EXTENSION}-${version}.tgz"
         ;;  
         *-pear|pear)
-            echo ">>>> Match pear"
+            echoG " - Match pear"
             source_url="http://download.pear.php.net/package/PEAR-${version}.tgz"
             source="PEAR-${version}.tgz"
         ;;
         *-ioncube|ioncube)
-            echo ">>>> Match ioncube"
-            # No more source needed
+            echoG " - Match ioncube"
         ;;         
         lsphp*)
-            echo ">>>> Match lsphp"
+            echoG " - Match lsphp"
             source_url="http://us2.php.net/distributions/php-$version.tar.gz"
             source="php-$version.tar.gz"
         ;;
         *)
-            echo ">>>> Match *"
+            echoG " - Match *"
             source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
             source="${PHP_EXTENSION}-${version}.tgz"
         ;;
     esac
 
     if [ -f $BUILD_DIR/SOURCES/$source ]; then
-        echo -e "\x1b[33m* Found existing source tarball file, delete it and create new one !\x1b[0m"
+        echoY 'Found existing source tarball file, delete it and create new one !'
         if [[ ${PHP_EXTENSION} != 'msgpack' ]]; then
             rm -f $BUILD_DIR/SOURCES/$source
         fi
@@ -182,26 +196,24 @@ prepare_source()
             wget --no-check-certificate -O $BUILD_DIR/SOURCES/$source $source_url
         fi    
     fi
-    echo "SOURCE: $BUILD_DIR/SOURCES/$source"
+    echoG "SOURCE: $BUILD_DIR/SOURCES/$source"
 }
 
 build_rpms()
 {
     echoB "${FPACE} - Build rpms"
     if [ -f $BUILD_SRPMS/$product-$version-$revision.$DIST_TAG.src.rpm ]; then
-        echo
-        echo -e "\x1b[33m* Found existing source rpm, delete it and create new one \x1b[0m"
-        echo
+        echoY "Found existing source rpm, delete it and create new one."
         rm -f $BUILD_SRPMS/$product-$version-$revision.$DIST_TAG.src.rpm
     fi
 
     echoB "${FPACE} - Build rpm source package"
-    echo "SPEC Location: $BUILD_SPECS/$product-$version-$revision.spec"
+    echoG "SPEC Location: $BUILD_SPECS/$product-$version-$revision.spec"
     rpmbuild --nodeps -bs $BUILD_SPECS/$product-$version-$revision.spec  \
       --define "_topdir $BUILD_DIR" \
       --define "dist $DIST_TAG"
     if [ $? != 0 ]; then
-        echo 'rpm source package has issue; exit!'; exit 1
+        echoR 'rpm source package has issue; exit!'; exit 1
     fi
 
     echoB "${FPACE} - Build rpm package with mock"
@@ -220,12 +232,14 @@ build_rpms()
 
 list_packages()
 {
-    echo "##################################################"
-    echo " The package building process has finished ! "
-    echo "##################################################"
-    echo "########### Build Result Content #################"
+    echoY "########### Build Result Content #################"
     ls -lRX $RESULT_DIR
-    echo " ################# End of Result #################"  
+    echoY " ################# End of Result #################"  
+    ls -lRX $RESULT_DIR | grep ${product}-${version}-${revision}${DIST_TAG}.*.rpm > dev/null
+    if [ ${?} != 0 ]; then
+        echoR "${product}-${version}-${revision}${DIST_TAG}.*.rpm is not found!"
+        exit 1
+    fi
 }
 
 upload_to_server(){

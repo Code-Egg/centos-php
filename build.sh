@@ -16,15 +16,10 @@ version=
 revision=
 
 if [ $(id -u) != "0" ]; then
-    echo "Error: The user is not root "
-    echo "Please run this script as root"
+    echoR "Error: The user is not root, please run this script as root"
     exit 1
 fi
-echow(){
-    FLAG=${1}
-    shift
-    echo -e "\033[1m${EPACE}${FLAG}\033[0m${@}"
-}
+
 show_help()
 {
     echo -e "\033[1mExamples\033[0m"
@@ -89,13 +84,13 @@ if [ -z "${revision}" ]; then
     if [[ $revision == ?(-)+([[:digit:]]) ]]; then
         revision=$((revision+1))
     else
-        echo "$revision is not a number, set value to 1"
+        echoY "$revision is not a number, set value to 1"
         revision=1
     fi      
 fi
 
 if [ -z ${input_archs} ]; then
-    echo 'input_archs is not found, use default value x86_64'
+    echoY 'input_archs is not found, use default value x86_64'
     archs='x86_64'
 else    
     archs=$input_archs
