@@ -79,24 +79,8 @@ if [ -z ${input_archs} ]; then
 else    
     archs=${input_archs}
 fi
-
-if [ -z "${revision}" ]; then
-    echo ${product} | grep '-' >/dev/null
-    if [ $? = 0 ]; then 
-        revision=$(curl -isk https://${prod_server}/centos/${EPEL_TAG}/${archs}/RPMS/ | grep ${product}-${version} | \
-          sed -nE "s/.*${product}-${version}-([0-9]+)\.el.*/\1/p" | \
-          sort -nr | head -n1)
-    fi
-    if [[ ${revision} == ?(-)+([[:digit:]]) ]]; then
-        revision=$((revision+1))
-    else
-        echoY "${revision} is not a number, set value to 1"
-        revision=1
-    fi      
-fi
-
-check_input
 set_paras
+check_input
 set_build_dir
 generate_spec
 prepare_source

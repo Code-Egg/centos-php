@@ -88,6 +88,22 @@ set_paras()
             ;;
     esac
     echo "The following platforms are specified: ${platforms}"
+
+    if [ -z "${revision}" ]; then
+        echo ${product} | grep '-' >/dev/null
+        if [ $? = 0 ]; then 
+            revision=$(curl -isk https://${prod_server}/centos/${EPEL_TAG}/${archs}/RPMS/ | grep ${product}-${version} | \
+            sed -nE "s/.*${product}-${version}-([0-9]+)\.el.*/\1/p" | \
+            sort -nr | head -n1)
+        fi
+        if [[ ${revision} == ?(-)+([[:digit:]]) ]]; then
+            revision=$((revision+1))
+        else
+            echoY "${revision} is not a number, set value to 1"
+            revision=1
+        fi      
+    fi
+
     PHP_VERSION_NUMBER=$(echo "${product}" | sed 's/[^0-9]*//g')
     if [[ "${PHP_VERSION_NUMBER}" == '74' ]]; then
         PHP_VERSION_DATE='20190902'
