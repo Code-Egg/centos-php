@@ -50,15 +50,42 @@ set_paras()
     fi
     case "${platforms}" in
         # ALL) platforms="epel-9-x86_64 epel-8-x86_64 epel-9-aarch64 epel-8-aarch64" ;;
-        e10x|epel-10-x86_64)  platforms="epel-10-x86_64"; EPEL_TAG=10  ;;        
-        e9x|epel-9-x86_64)    platforms="epel-9-x86_64";  EPEL_TAG=9   ;;
-        e8x|epel-8-x86_64)    platforms="epel-8-x86_64";  EPEL_TAG=8   ;;
-        e7x|epel-7-x86_64)    platforms="epel-7-x86_64";  EPEL_TAG=7   ;;
-        e10a|epel-10-aarch64) platforms="epel-10-aarch64";EPEL_TAG=10 ;;        
-        e9a|epel-9-aarch64)   platforms="epel-9-aarch64"; EPEL_TAG=9  ;;
-        e8a|epel-8-aarch64)   platforms="epel-8-aarch64"; EPEL_TAG=8  ;;
-        e7a|epel-7-aarch64)   platforms="epel-7-aarch64"; EPEL_TAG=7  ;;
-        *)  echo "Unrecognized platform: ${platforms}"; exit 1 ;;
+        e10x|epel-10-x86_64)  
+            platforms="epel-10-x86_64"
+            EPEL_TAG=10
+            ;;        
+        e9x|epel-9-x86_64)    
+            platforms="epel-9-x86_64"
+            EPEL_TAG=9   
+            ;;
+        e8x|epel-8-x86_64)    
+            platforms="epel-8-x86_64"
+            EPEL_TAG=8   
+            ;;
+        e7x|epel-7-x86_64)    
+            platforms="epel-7-x86_64"
+            EPEL_TAG=7   
+            ;;
+        e10a|epel-10-aarch64) 
+            platforms="epel-10-aarch64"
+            EPEL_TAG=10 
+            ;;        
+        e9a|epel-9-aarch64)   
+            platforms="epel-9-aarch64"
+            EPEL_TAG=9  
+            ;;
+        e8a|epel-8-aarch64)   
+            platforms="epel-8-aarch64"
+            EPEL_TAG=8  
+            ;;
+        e7a|epel-7-aarch64)   
+            platforms="epel-7-aarch64"
+            EPEL_TAG=7  
+            ;;
+        *)  
+            echo "Unrecognized platform: ${platforms}"; 
+            exit 1 
+            ;;
     esac
     echo "The following platforms are specified: ${platforms}"
     PHP_VERSION_NUMBER=$(echo "${product}" | sed 's/[^0-9]*//g')
