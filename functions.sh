@@ -1,14 +1,6 @@
 #!/bin/bash
 #set -x
 cur_path=$(pwd)
-PRODUCT_DIR=${cur_path}/packaging/build/$product
-RESULT_DIR=${PRODUCT_DIR}/$version-$revision/result
-BUILD_DIR=$cur_path/build
-BUILD_SPECS=$cur_path/build/SPECS
-BUILD_SRPMS=$BUILD_DIR/SRPMS
-BUILDER_NAME="LiteSpeedTech"
-BUILDER_EMAIL="info@litespeedtech.com"
-DIST_TAG=".el$(echo "$platforms" | grep -oP '[0-9]+')"
 
 check_input(){
     echo " ###########   Check_input  ############# "
@@ -37,13 +29,7 @@ set_paras()
         *)   echo "Unrecognized platform: $platforms"; exit 1 ;;
     esac
     echo "The following platforms are specified: $platforms"
-
-    PHP_EXTENSION=$(echo "${product}" | sed 's/pecl-//g' | sed 's/^[^-]*-//g')
-    if [[ "${PHP_EXTENSION}" =~ 'lsphp' ]]; then
-        PHP_EXTENSION=''
-    fi
     PHP_VERSION_NUMBER=$(echo "${product}" | sed 's/[^0-9]*//g')
-
     if [[ "${PHP_VERSION_NUMBER}" == '74' ]]; then
         PHP_VERSION_DATE='20190902'
     elif [[ "${PHP_VERSION_NUMBER}" == '80' ]]; then
@@ -57,8 +43,20 @@ set_paras()
     elif [[ "${PHP_VERSION_NUMBER}" == '84' ]]; then
         PHP_VERSION_DATE='20240924'
     fi
+    PHP_EXTENSION=$(echo "${product}" | sed 's/pecl-//g' | sed 's/^[^-]*-//g')
+    if [[ "${PHP_EXTENSION}" =~ 'lsphp' ]]; then
+        PHP_EXTENSION=''
+    fi  
     php_ver=${PHP_VERSION_NUMBER}
     php_api=${PHP_VERSION_DATE}
+    PRODUCT_DIR=${cur_path}/packaging/build/$product
+    RESULT_DIR=${PRODUCT_DIR}/$version-$revision/result
+    BUILD_DIR=$cur_path/build
+    BUILD_SPECS=$cur_path/build/SPECS
+    BUILD_SRPMS=$BUILD_DIR/SRPMS
+    BUILDER_NAME="LiteSpeedTech"
+    BUILDER_EMAIL="info@litespeedtech.com"
+    DIST_TAG=".el$(echo "$platforms" | grep -oP '[0-9]+')"    
 }
 
 set_build_dir()
