@@ -36,19 +36,19 @@ echoG()
 check_input()
 {
     echo " ###########   Check_input  ############# "
-    echo " Product name is $product "
-    echo " Version number is $version "
-    echo " Build revision is $revision "
-    echo " Required archs are $archs "
-    echo " Required platform is $platforms "
+    echo " Product name is ${product} "
+    echo " Version number is ${version} "
+    echo " Build revision is ${revision} "
+    echo " Required archs are ${archs} "
+    echo " Required platform is ${platforms} "
 }
 
 set_paras()
 {
-    if [[ "$platforms" =~ ^[0-9]+$ ]]; then
+    if [[ "${platforms}" =~ ^[0-9]+$ ]]; then
         platforms=epel-${platforms}-$archs
     fi
-    case "$platforms" in
+    case "${platforms}" in
         # ALL) platforms="epel-9-x86_64 epel-8-x86_64 epel-9-aarch64 epel-8-aarch64" ;;
         e10x|epel-10-x86_64)  platforms="epel-10-x86_64"  ;;        
         e9x|epel-9-x86_64)    platforms="epel-9-x86_64"   ;;
@@ -58,9 +58,9 @@ set_paras()
         e9a|epel-9-aarch64)   platforms="epel-9-aarch64"  ;;
         e8a|epel-8-aarch64)   platforms="epel-8-aarch64"  ;;
         e7a|epel-7-aarch64)   platforms="epel-7-aarch64"  ;;
-        *)  echo "Unrecognized platform: $platforms"; exit 1 ;;
+        *)  echo "Unrecognized platform: ${platforms}"; exit 1 ;;
     esac
-    echo "The following platforms are specified: $platforms"
+    echo "The following platforms are specified: ${platforms}"
     PHP_VERSION_NUMBER=$(echo "${product}" | sed 's/[^0-9]*//g')
     if [[ "${PHP_VERSION_NUMBER}" == '74' ]]; then
         PHP_VERSION_DATE='20190902'
@@ -81,38 +81,40 @@ set_paras()
     fi  
     php_ver=${PHP_VERSION_NUMBER}
     php_api=${PHP_VERSION_DATE}
-    PRODUCT_DIR=${cur_path}/packaging/build/$product
-    RESULT_DIR=${PRODUCT_DIR}/$version-$revision/result
-    BUILD_DIR=$cur_path/build
-    BUILD_SPECS=$BUILD_DIR/SPECS
-    BUILD_SRPMS=$BUILD_DIR/SRPMS
+    PRODUCT_DIR=${cur_path}/packaging/build/${product}
+    RESULT_DIR=${PRODUCT_DIR}/${version}-${revision}/result
+    BUILD_DIR=${cur_path}/build
+    BUILD_SPECS=${BUILD_DIR}/SPECS
+    BUILD_SRPMS=${BUILD_DIR}/SRPMS
+    BUILD_SOURCES=${BUILD_DIR}/SOURCES
     BUILDER_NAME="LiteSpeedTech"
     BUILDER_EMAIL="info@litespeedtech.com"
+    PRODUCT_WITH_VER=${product}-${version}-${revision}
 }
 
 set_build_dir()
 {
     echoB "${FPACE} - Set Build Dir"
-    if [ -d $RESULT_DIR ]; then
-        echo " find build directory exists "
+    if [ -d ${RESULT_DIR} ]; then
+        echoY 'Find build directory exists'
         clear_or_not=n
-        read -p "do you want to clear it before continuing? y/n:  " -t 15 clear_or_not
+        read -p 'do you want to clear it before continuing? y/n:  ' -t 15 clear_or_not
         if [ x$clear_or_not == xy ]; then
             echo " now clean the build directory "
-            rm -rf $RESULT_DIR/*
+            rm -rf ${RESULT_DIR}/*
         else
             echo 'The build directory will be retained, keeping the existing build-result folder.'
             echo 'Only relevant files will be updated.'
-            cd $RESULT_DIR/
-            rm -rf `ls $BUILD_DIR | grep -v build-result`          
+            cd ${RESULT_DIR}/
+            rm -rf `ls ${BUILD_DIR} | grep -v build-result`          
         fi
     else
-        mkdir -p $RESULT_DIR               
+        mkdir -p ${RESULT_DIR}               
     fi
  
-    for platform in $platforms;
+    for platform in ${platforms};
     do
-        mkdir -p $RESULT_DIR/$platform
+        mkdir -p ${RESULT_DIR}/${platform}
     done
 }
 
@@ -120,112 +122,112 @@ generate_spec()
 {
     echoB "${FPACE} - Generate spec"
     date=$(date +"%a %b %d %Y")
-    echoG "BUILD_DIR is: $BUILD_DIR"
+    echoG "BUILD_DIR is: ${BUILD_DIR}"
  
-    if [ ! -f "$PRODUCT_DIR/changelog" ]; then
-        change_log="* $date $BUILDER_NAME $BUILDER_EMAIL\n- Initial spec creation for $product rpm";
+    if [ ! -f "${PRODUCT_DIR}/changelog" ]; then
+        change_log="* ${date} ${BUILDER_NAME} ${BUILDER_EMAIL}\n- Initial spec creation for ${product} rpm";
     else
-        change_log=$(cat $PRODUCT_DIR/changelog);
-        change_log="* $date $BUILDER_NAME $BUILDER_EMAIL\n- $version-$revision spec created" . $change_log;
+        change_log=$(cat ${PRODUCT_DIR}/changelog);
+        change_log="* ${date} ${BUILDER_NAME} ${BUILDER_EMAIL}\n- ${version}-${revision} spec created" . ${change_log};
     fi
 
     if [[ ${PHP_EXTENSION} == '' ]]; then
-        SPEC_FILE=$product.spec.in
+        SPEC_FILE=${product}.spec.in
     elif [[ ${PHP_EXTENSION} == 'pear' ]] || [[ ${PHP_EXTENSION} == 'ioncube' ]]; then
         SPEC_FILE=lsphp-${PHP_EXTENSION}.spec.in
     else
         SPEC_FILE=lsphp-pecl-${PHP_EXTENSION}.spec.in
     fi
 
-    if [ -f "$BUILD_DIR/SPECS/$product-$version-$revision.spec" ]; then
-        echoY "Found existing spec file, delete it and create new one"
-        rm -f $BUILD_DIR/SPECS/$product-$version-$revision.spec
+    if [ -f "${BUILD_SPECS}/${PRODUCT_WITH_VER}.spec" ]; then
+        echoY 'Found existing spec file, delete it and create new one'
+        rm -f ${BUILD_SPECS}/${PRODUCT_WITH_VER}.spec
     fi
 
     {
-        echo "s:%%PRODUCT%%:$product:g"
-        echo "s:%%VERSION%%:$version:g"
-        echo "s:%%BUILD%%:$revision:g"
-        echo "s:%%REVISION%%:$revision:g"
-        echo "s:%%LSAPIVER%%:$lsapiver:g"
-        echo "s:%%PHP_VER%%:$php_ver:g"
-        echo "s:%%PHP_API%%:$php_api:g"
-        echo "s:%%CHANGE_LOG%%:$change_log:"
+        echo "s:%%PRODUCT%%:${product}:g"
+        echo "s:%%VERSION%%:${version}:g"
+        echo "s:%%BUILD%%:${revision}:g"
+        echo "s:%%REVISION%%:${revision}:g"
+        echo "s:%%LSAPIVER%%:${lsapiver}:g"
+        echo "s:%%PHP_VER%%:${php_ver}:g"
+        echo "s:%%PHP_API%%:${php_api}:g"
+        echo "s:%%CHANGE_LOG%%:${change_log}:"
     }  > ./.sed.temp
-    sed -f ./.sed.temp ./specs/$SPEC_FILE > "$BUILD_DIR/SPECS/$product-$version-$revision.spec"
+    sed -f ./.sed.temp ./specs/${SPEC_FILE} > "${BUILD_SPECS}/${PRODUCT_WITH_VER}.spec"
 }
 
 prepare_source()
 {
     echoB "${FPACE} - Prepare source"
-    case "$product" in
+    case "${product}" in
         *-pecl-*)
-            echoG " - Match pecl"
+            echoG ' - Match pecl'
             source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
             source="${PHP_EXTENSION}-${version}.tgz"
         ;;  
         *-pear|pear)
-            echoG " - Match pear"
+            echoG ' - Match pear'
             source_url="http://download.pear.php.net/package/PEAR-${version}.tgz"
             source="PEAR-${version}.tgz"
         ;;
         *-ioncube|ioncube)
-            echoG " - Match ioncube"
+            echoG ' - Match ioncube'
         ;;         
         lsphp*)
-            echoG " - Match lsphp"
+            echoG ' - Match lsphp'
             source_url="http://us2.php.net/distributions/php-$version.tar.gz"
             source="php-$version.tar.gz"
         ;;
         *)
-            echoG " - Match *"
+            echoG ' - Match *'
             source_url="https://pecl.php.net/get/${PHP_EXTENSION}-${version}.tgz"
             source="${PHP_EXTENSION}-${version}.tgz"
         ;;
     esac
 
-    if [ -f $BUILD_DIR/SOURCES/$source ]; then
+    if [ -f ${BUILD_SOURCES}/${source} ]; then
         echoY 'Found existing source tarball file, delete it and create new one !'
         if [[ ${PHP_EXTENSION} != 'msgpack' ]]; then
-            rm -f $BUILD_DIR/SOURCES/$source
+            rm -f ${BUILD_SOURCES}/${source}
         fi
     fi
 
-    if [ ! -f $BUILD_DIR/SOURCES/$source ]; then
+    if [ ! -f ${BUILD_SOURCES}/${source} ]; then
         if [[ ${PHP_EXTENSION} != 'ioncube' ]]; then
-            wget --no-check-certificate -O $BUILD_DIR/SOURCES/$source $source_url
+            wget --no-check-certificate -O ${BUILD_SOURCES}/${source} ${source_url}
         fi    
     fi
-    echoG "SOURCE: $BUILD_DIR/SOURCES/$source"
+    echoG "SOURCE: ${BUILD_SOURCES}/${source}"
 }
 
 build_rpms()
 {
     echoB "${FPACE} - Build rpms"
-    if [ -f $BUILD_SRPMS/$product-$version-$revision.$DIST_TAG.src.rpm ]; then
-        echoY "Found existing source rpm, delete it and create new one."
-        rm -f $BUILD_SRPMS/$product-$version-$revision.$DIST_TAG.src.rpm
+    if [ -f ${BUILD_SRPMS}/${PRODUCT_WITH_VER}.${DIST_TAG}.src.rpm ]; then
+        echoY 'Found existing source rpm, delete it and create new one.'
+        rm -f ${BUILD_SRPMS}/${PRODUCT_WITH_VER}.${DIST_TAG}.src.rpm
     fi
 
     echoB "${FPACE} - Build rpm source package"
-    echoG "SPEC Location: $BUILD_SPECS/$product-$version-$revision.spec"
-    rpmbuild --nodeps -bs $BUILD_SPECS/$product-$version-$revision.spec  \
-      --define "_topdir $BUILD_DIR" \
-      --define "dist $DIST_TAG"
+    echoG "SPEC Location: ${BUILD_SPECS}/${PRODUCT_WITH_VER}.spec"
+    rpmbuild --nodeps -bs ${BUILD_SPECS}/${PRODUCT_WITH_VER}.spec  \
+      --define "_topdir ${BUILD_DIR}" \
+      --define "dist ${DIST_TAG}"
     if [ $? != 0 ]; then
         echoR 'rpm source package has issue; exit!'; exit 1
     fi
 
     echoB "${FPACE} - Build rpm package with mock"
-    SRPM=$BUILD_SRPMS/${product}-${version}-${revision}${DIST_TAG}.src.rpm
-    for platform in $platforms;
+    SRPM=${BUILD_SRPMS}/${PRODUCT_WITH_VER}${DIST_TAG}.src.rpm
+    for platform in ${platforms};
     do
         if [ "${platforms}" == 'e10x' ] || [ "${platforms}" == 'epel-10-x86_64' ] || [ "${platforms}" == '10' ]; then
-            mock -r $platform --copyin compiled/10/ccache /usr/bin/ccache
+            mock -r ${platform} --copyin compiled/10/ccache /usr/bin/ccache
         fi
         # Use mock -v to enable debug or mock --quiet to silence 
-        mock --resultdir=$RESULT_DIR/$platform --disable-plugin=selinux -r $platform "$SRPM"
-        if [ $? != 0 ]; then
+        mock --resultdir=${RESULT_DIR}/${platform} --disable-plugin=selinux -r ${platform} "${SRPM}"
+        if [ ${?} != 0 ]; then
             echo 'rpm build package has issue; exit!'; exit 1
         fi
     done
@@ -234,11 +236,11 @@ build_rpms()
 list_packages()
 {
     echoY "########### Build Result Content #################"
-    ls -lRX $RESULT_DIR
+    ls -lRX ${RESULT_DIR}/${platforms}
     echoY " ################# End of Result #################"  
-    ls -lRX $RESULT_DIR | grep ${product}-${version}-${revision}${DIST_TAG}.*.rpm >/dev/null
+    ls -lRX ${RESULT_DIR} | grep ${PRODUCT_WITH_VER}${DIST_TAG}.*.rpm >/dev/null
     if [ ${?} != 0 ]; then
-        echoR "${product}-${version}-${revision}${DIST_TAG}.*.rpm is not found!"
+        echoR "${PRODUCT_WITH_VER}${DIST_TAG}.*.rpm is not found!"
         exit 1
     fi
 }
