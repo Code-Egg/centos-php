@@ -73,11 +73,17 @@ else
     product=lsphp${PHP_V}-pecl-"${product}"
 fi
 
+if [ -z ${input_archs} ]; then
+    echoY 'input_archs is not found, use default value x86_64'
+    archs='x86_64'
+else    
+    archs=${input_archs}
+fi
+
 if [ -z "${revision}" ]; then
-    TMP_DIST=$(echo ${dists} | awk '{ print $1 }')
     echo ${product} | grep '-' >/dev/null
-    if [ $? = 1 ]; then 
-        revision=$(curl -isk https://${prod_server}/centos/9/x86_64/RPMS/ | grep ${product}-${version} | \
+    if [ $? = 0 ]; then 
+        revision=$(curl -isk https://${prod_server}/centos/${EPEL_TAG}/${archs}/RPMS/ | grep ${product}-${version} | \
           sed -nE "s/.*${product}-${version}-([0-9]+)\.el.*/\1/p" | \
           sort -nr | head -n1)
     fi
@@ -87,13 +93,6 @@ if [ -z "${revision}" ]; then
         echoY "${revision} is not a number, set value to 1"
         revision=1
     fi      
-fi
-
-if [ -z ${input_archs} ]; then
-    echoY 'input_archs is not found, use default value x86_64'
-    archs='x86_64'
-else    
-    archs=${input_archs}
 fi
 
 check_input
