@@ -31,10 +31,10 @@ on:
         default: '9'
         type: choice
         options:
-          - '"10"'
           - '"9"'
           - '"8"'
-          - '"10","9","8"'
+          - '"10"'          
+          - '"9","8"'
 
 jobs:
   package:

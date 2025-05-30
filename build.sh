@@ -3,6 +3,7 @@
 #set -v
 target_server='repo-dev.litespeedtech.com'
 prod_server='rpms.litespeedtech.com'
+source ./functions.sh #2>/dev/null
 EPACE='        '
 PHP_V=84
 product=$1
@@ -13,7 +14,6 @@ PUSH_FLAG='OFF'
 version=
 revision=
 
-source ./functions.sh #2>/dev/null
 if [ $(id -u) != "0" ]; then
     echo "Error: The user is not root "
     echo "Please run this script as root"
