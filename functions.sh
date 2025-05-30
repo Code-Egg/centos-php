@@ -3,7 +3,15 @@
 cur_path=$(pwd)
 DIST_TAG=".el$(echo "$platforms" | grep -oP '\d+' | head -n1)"
 
-check_input(){
+echoB()
+{
+    FLAG=$1
+    shift
+    echo -e "\033[38;1;34m$FLAG\033[39m$@"
+}
+
+check_input()
+{
     echo " ###########   Check_input  ############# "
     echo " Product name is $product "
     echo " Version number is $version "
@@ -65,6 +73,7 @@ set_paras()
 
 set_build_dir()
 {
+    echoB "${FPACE} - Set Build Dir"
     if [ -d $RESULT_DIR ]; then
         echo " find build directory exists "
         clear_or_not=n
@@ -92,7 +101,7 @@ set_build_dir()
 
 generate_spec()
 {
-    echo ">>>>>>>>>>>>>>>>>>>>>>> Build spec"
+    echoB "${FPACE} - Generate spec"
     date=$(date +"%a %b %d %Y")
     echo "BUILD_DIR is: $BUILD_DIR"
  
@@ -129,12 +138,11 @@ generate_spec()
         echo "s:%%CHANGE_LOG%%:$change_log:"
     }  > ./.sed.temp
     sed -f ./.sed.temp ./specs/$SPEC_FILE > "$BUILD_DIR/SPECS/$product-$version-$revision.spec"
-    echo "Build spec <<<<<<<<<<<<<<<<<<<<<<<"
 }
 
 prepare_source()
 {
-    echo ">>>>>>>>>>>>>>>>>>>>>>> Build source"
+    echoB "${FPACE} - Prepare source"
     case "$product" in
         *-pecl-*)
             echo ">>>> Match pecl"
@@ -175,12 +183,11 @@ prepare_source()
         fi    
     fi
     echo "SOURCE: $BUILD_DIR/SOURCES/$source"
-    echo "Build source <<<<<<<<<<<<<<<<<<<<<<<"
 }
 
 build_rpms()
 {
-    echo ">>>>>>>>>>>>>>>>>>>>>>> Build rpms"
+    echoB "${FPACE} - Build rpms"
     if [ -f $BUILD_SRPMS/$product-$version-$revision.$DIST_TAG.src.rpm ]; then
         echo
         echo -e "\x1b[33m* Found existing source rpm, delete it and create new one \x1b[0m"
@@ -188,7 +195,7 @@ build_rpms()
         rm -f $BUILD_SRPMS/$product-$version-$revision.$DIST_TAG.src.rpm
     fi
 
-    echo ">>>>>>>>>>>>>>>>>>>>>>> Build rpm source package"
+    echoB "${FPACE} - Build rpm source package"
     echo "SPEC Location: $BUILD_SPECS/$product-$version-$revision.spec"
     rpmbuild --nodeps -bs $BUILD_SPECS/$product-$version-$revision.spec  \
       --define "_topdir $BUILD_DIR" \
@@ -197,7 +204,7 @@ build_rpms()
         echo 'rpm source package has issue; exit!'; exit 1
     fi
 
-    echo ">>>>>>>>>>>>>>>>>>>>>>> Build rpm package with mock"
+    echoB "${FPACE} - Build rpm package with mock"
     SRPM=$BUILD_SRPMS/${product}-${version}-${revision}${DIST_TAG}.src.rpm
     for platform in $platforms;
     do

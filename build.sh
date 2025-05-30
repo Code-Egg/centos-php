@@ -5,6 +5,7 @@ target_server='repo-dev.litespeedtech.com'
 prod_server='rpms.litespeedtech.com'
 source ./functions.sh #2>/dev/null
 EPACE='        '
+FPACE='    '
 PHP_V=84
 product=$1
 platforms=$2
@@ -47,6 +48,24 @@ if [ -z "${1}" ]; then
     show_help
 fi
 
+while [ ! -z "${1}" ]; do
+    case $1 in
+        --version) shift
+            version="${1}"
+                ;;
+        --revision) shift
+            revision="${1}"
+                ;;
+        --push | --push-flag)
+            PUSH_FLAG='ON'
+                ;;
+        -[hH] | --help)
+            show_help
+                ;;           
+    esac
+    shift
+done
+
 if [ -z "${version}" ]; then
     version="$(grep ${product}= VERSION.txt | awk -F '=' '{print $2}')"
 fi
@@ -81,24 +100,6 @@ if [ -z ${input_archs} ]; then
 else    
     archs=$input_archs
 fi
-
-while [ ! -z "${1}" ]; do
-    case $1 in
-        --version) shift
-            version="${1}"
-                ;;
-        --revision) shift
-            revision="${1}"
-                ;;
-        --push | --push-flag)
-            PUSH_FLAG='ON'
-                ;;
-        -[hH] | --help)
-            show_help
-                ;;           
-    esac
-    shift
-done
 
 check_input
 set_paras
