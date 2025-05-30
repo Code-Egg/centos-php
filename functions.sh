@@ -1,6 +1,7 @@
 #!/bin/bash
 #set -x
 cur_path=$(pwd)
+DIST_TAG=".el$(echo "$platforms" | grep -oP '\d+' | head -n1)"
 
 check_input(){
     echo " ###########   Check_input  ############# "
@@ -56,7 +57,10 @@ set_paras()
     BUILD_SRPMS=$BUILD_DIR/SRPMS
     BUILDER_NAME="LiteSpeedTech"
     BUILDER_EMAIL="info@litespeedtech.com"
-    DIST_TAG=".el$(echo "$platforms" | grep -oP '[0-9]+')"    
+    echo "PRODUCT_DIR: $PRODUCT_DIR"
+    echo "RESULT_DIR: $RESULT_DIR"
+    echo "BUILD_DIR: $BUILD_DIR"
+    echo "BUILD_SPECS: $BUILD_SPECS" 
 }
 
 set_build_dir()
